@@ -285,6 +285,48 @@ theorem integrableOn_fun_neg_iff {f : α → E} :
     IntegrableOn (fun x ↦ -f x) s μ ↔ IntegrableOn f s μ :=
   integrable_neg_iff
 
+section NonUnitalNormedRing
+
+variable {R : Type*} [NonUnitalNormedRing R]
+
+theorem IntegrableOn.bdd_mul {f g : α → R} {C : ℝ} (hg : IntegrableOn g s μ)
+    (hf : AEStronglyMeasurable f (μ.restrict s))
+    (hf_bound : ∀ᵐ x ∂μ.restrict s, ‖f x‖ ≤ C) :
+    IntegrableOn (fun x => f x * g x) s μ :=
+  (hg.integrable.norm.const_mul C).mono' (hf.mul hg.integrable.aestronglyMeasurable) <| by
+    filter_upwards [hf_bound] with x hx
+    exact norm_mul_le_of_le hx le_rfl
+
+theorem IntegrableOn.mul_bdd {f g : α → R} {C : ℝ} (hf : IntegrableOn f s μ)
+    (hg : AEStronglyMeasurable g (μ.restrict s))
+    (hg_bound : ∀ᵐ x ∂μ.restrict s, ‖g x‖ ≤ C) :
+    IntegrableOn (fun x => f x * g x) s μ :=
+  (hf.integrable.norm.const_mul C).mono' (hf.integrable.aestronglyMeasurable.mul hg) <| by
+    filter_upwards [hg_bound] with x hx
+    simpa [mul_comm] using norm_mul_le_of_le le_rfl hx
+
+end NonUnitalNormedRing
+
+section SMul
+
+variable {𝕜 : Type*} [NormedRing 𝕜] [MulActionWithZero 𝕜 E] [IsBoundedSMul 𝕜 E]
+
+theorem IntegrableOn.bdd_smul {f : α → E} {φ : α → 𝕜} (hf : IntegrableOn f s μ)
+    (C : ℝ) (hφ : AEStronglyMeasurable φ (μ.restrict s))
+    (hφ_bound : ∀ᵐ x ∂μ.restrict s, ‖φ x‖ ≤ C) :
+    IntegrableOn (fun x => φ x • f x) s μ :=
+  memLp_one_iff_integrable.1 <|
+    (memLp_one_iff_integrable.2 hf.integrable).smul (memLp_top_of_bound hφ C hφ_bound)
+
+theorem IntegrableOn.smul_bdd {f : α → 𝕜} {g : α → E} (hf : IntegrableOn f s μ)
+    (C : ℝ) (hg : AEStronglyMeasurable g (μ.restrict s))
+    (hg_bound : ∀ᵐ x ∂μ.restrict s, ‖g x‖ ≤ C) :
+    IntegrableOn (fun x => f x • g x) s μ :=
+  memLp_one_iff_integrable.1 <|
+    (memLp_top_of_bound hg C hg_bound).smul (memLp_one_iff_integrable.2 hf.integrable)
+
+end SMul
+
 @[simp]
 theorem integrableOn_add_measure [PseudoMetrizableSpace ε] :
     IntegrableOn f s (μ + ν) ↔ IntegrableOn f s μ ∧ IntegrableOn f s ν :=

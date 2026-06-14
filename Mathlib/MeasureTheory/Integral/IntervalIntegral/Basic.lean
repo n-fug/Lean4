@@ -351,12 +351,16 @@ section Mul
 theorem mul_continuousOn {f g : ℝ → A} (hf : IntervalIntegrable f μ a b)
     (hg : ContinuousOn g [[a, b]]) : IntervalIntegrable (fun x => f x * g x) μ a b := by
   rw [intervalIntegrable_iff] at hf ⊢
-  exact hf.mul_continuousOn_of_subset hg measurableSet_Ioc isCompact_uIcc Ioc_subset_Icc_self
+  obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hg
+  exact hf.mul_bdd ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+    (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 theorem continuousOn_mul {f g : ℝ → A} (hf : IntervalIntegrable f μ a b)
     (hg : ContinuousOn g [[a, b]]) : IntervalIntegrable (fun x => g x * f x) μ a b := by
   rw [intervalIntegrable_iff] at hf ⊢
-  exact hf.continuousOn_mul_of_subset hg isCompact_uIcc measurableSet_Ioc Ioc_subset_Icc_self
+  obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hg
+  exact hf.bdd_mul ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+    (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 @[simp]
 theorem const_mul {f : ℝ → A} (hf : IntervalIntegrable f μ a b) (c : A) :
@@ -372,17 +376,21 @@ end Mul
 
 section SMul
 
-variable {f : ℝ → 𝕜} {g : ℝ → E} [NormedRing 𝕜] [Module 𝕜 E] [NormSMulClass 𝕜 E]
+variable {f : ℝ → 𝕜} {g : ℝ → E} [NormedRing 𝕜] [Module 𝕜 E] [IsBoundedSMul 𝕜 E]
 
 theorem smul_continuousOn (hf : IntervalIntegrable f μ a b)
     (hg : ContinuousOn g [[a, b]]) : IntervalIntegrable (fun x => f x • g x) μ a b := by
   rw [intervalIntegrable_iff] at hf ⊢
-  exact hf.smul_continuousOn_of_subset hg measurableSet_Ioc isCompact_uIcc Ioc_subset_Icc_self
+  obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hg
+  exact hf.smul_bdd C ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+    (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 theorem continuousOn_smul (hg : IntervalIntegrable g μ a b)
     (hf : ContinuousOn f [[a, b]]) : IntervalIntegrable (fun x => f x • g x) μ a b := by
   rw [intervalIntegrable_iff] at hg ⊢
-  exact hg.continuousOn_smul_of_subset hf isCompact_uIcc measurableSet_Ioc Ioc_subset_Icc_self
+  obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hf
+  exact hg.bdd_smul C ((hf.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+    (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 end SMul
 
