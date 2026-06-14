@@ -352,14 +352,14 @@ theorem mul_continuousOn {f g : ℝ → A} (hf : IntervalIntegrable f μ a b)
     (hg : ContinuousOn g [[a, b]]) : IntervalIntegrable (fun x => f x * g x) μ a b := by
   rw [intervalIntegrable_iff] at hf ⊢
   obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hg
-  exact hf.mul_bdd ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+  exact Integrable.mul_bdd hf ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
     (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 theorem continuousOn_mul {f g : ℝ → A} (hf : IntervalIntegrable f μ a b)
     (hg : ContinuousOn g [[a, b]]) : IntervalIntegrable (fun x => g x * f x) μ a b := by
   rw [intervalIntegrable_iff] at hf ⊢
   obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hg
-  exact hf.bdd_mul ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+  exact Integrable.bdd_mul hf ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
     (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 @[simp]
@@ -382,14 +382,16 @@ theorem smul_continuousOn (hf : IntervalIntegrable f μ a b)
     (hg : ContinuousOn g [[a, b]]) : IntervalIntegrable (fun x => f x • g x) μ a b := by
   rw [intervalIntegrable_iff] at hf ⊢
   obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hg
-  exact hf.smul_bdd C ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+  exact Integrable.smul_bdd hf C
+    ((hg.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
     (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 theorem continuousOn_smul (hg : IntervalIntegrable g μ a b)
     (hf : ContinuousOn f [[a, b]]) : IntervalIntegrable (fun x => f x • g x) μ a b := by
   rw [intervalIntegrable_iff] at hg ⊢
   obtain ⟨C, hC⟩ := isCompact_uIcc.exists_bound_of_continuousOn hf
-  exact hg.bdd_smul C ((hf.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
+  exact Integrable.bdd_smul hg C
+    ((hf.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc)
     (ae_restrict_of_forall_mem measurableSet_Ioc fun x hx => hC x (Ioc_subset_Icc_self hx))
 
 end SMul

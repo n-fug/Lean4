@@ -725,7 +725,7 @@ theorem continuousOn_mul [LocallyCompactSpace X] [T2Space X] [NormedRing R]
   intro k hk_sub hk_c
   have hgk : ContinuousOn g k := hg.mono hk_sub
   obtain ⟨C, hC⟩ := hk_c.exists_bound_of_continuousOn hgk
-  exact (hf k hk_sub hk_c).bdd_mul (hgk.aestronglyMeasurable hk_c.measurableSet)
+  exact Integrable.bdd_mul (hf k hk_sub hk_c) (hgk.aestronglyMeasurable hk_c.measurableSet)
     (ae_restrict_of_forall_mem hk_c.measurableSet fun x hx => hC x hx)
 
 theorem mul_continuousOn [LocallyCompactSpace X] [T2Space X] [NormedRing R]
@@ -736,7 +736,7 @@ theorem mul_continuousOn [LocallyCompactSpace X] [T2Space X] [NormedRing R]
   intro k hk_sub hk_c
   have hgk : ContinuousOn g k := hg.mono hk_sub
   obtain ⟨C, hC⟩ := hk_c.exists_bound_of_continuousOn hgk
-  exact (hf k hk_sub hk_c).mul_bdd (hgk.aestronglyMeasurable hk_c.measurableSet)
+  exact Integrable.mul_bdd (hf k hk_sub hk_c) (hgk.aestronglyMeasurable hk_c.measurableSet)
     (ae_restrict_of_forall_mem hk_c.measurableSet fun x hx => hC x hx)
 
 theorem continuousOn_smul [LocallyCompactSpace X] [T2Space X] {𝕜 : Type*} [NormedRing 𝕜]
@@ -747,7 +747,7 @@ theorem continuousOn_smul [LocallyCompactSpace X] [T2Space X] {𝕜 : Type*} [No
   intro k hk_sub hk_c
   have hgk : ContinuousOn g k := hg.mono hk_sub
   obtain ⟨C, hC⟩ := hk_c.exists_bound_of_continuousOn hgk
-  exact (hf k hk_sub hk_c).bdd_smul C (hgk.aestronglyMeasurable hk_c.measurableSet)
+  exact Integrable.bdd_smul (hf k hk_sub hk_c) C (hgk.aestronglyMeasurable hk_c.measurableSet)
     (ae_restrict_of_forall_mem hk_c.measurableSet fun x hx => hC x hx)
 
 theorem smul_continuousOn [LocallyCompactSpace X] [T2Space X] {𝕜 : Type*} [NormedRing 𝕜]
@@ -758,7 +758,7 @@ theorem smul_continuousOn [LocallyCompactSpace X] [T2Space X] {𝕜 : Type*} [No
   intro k hk_sub hk_c
   have hgk : ContinuousOn g k := hg.mono hk_sub
   obtain ⟨C, hC⟩ := hk_c.exists_bound_of_continuousOn hgk
-  exact (hf k hk_sub hk_c).smul_bdd C (hgk.aestronglyMeasurable hk_c.measurableSet)
+  exact Integrable.smul_bdd (hf k hk_sub hk_c) C (hgk.aestronglyMeasurable hk_c.measurableSet)
     (ae_restrict_of_forall_mem hk_c.measurableSet fun x hx => hC x hx)
 
 end LocallyIntegrableOn
