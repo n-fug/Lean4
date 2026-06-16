@@ -231,7 +231,7 @@ section CommRing
 
 variable [CommRing R] (v : Valuation R Γ₀)
 
-instance : CommRing (WithVal v) := fast_instance% (equiv v).commRing
+instance : CommRing (WithVal v) := wrap_instance% (equiv v).commRing
 
 end CommRing
 
@@ -274,7 +274,7 @@ instance [AddCommMonoid S] [Module R S] [Module.Finite R S] :
     Module.Finite (WithVal v) S := .of_restrictScalars_finite R (WithVal v) S
 
 instance [Semiring S] [Module S R] : Module S (WithVal v) :=
-  fast_instance% (equiv v).module S
+  wrap_instance% (equiv v).module S
 
 variable [Ring S] [Module R S] (v : Valuation S Γ₀)
 
@@ -377,7 +377,7 @@ instance : RatCast (WithVal v) where ratCast q := toVal _ q
 
 @[simp] lemma ofVal_ratCast (q : ℚ) : ofVal (q : WithVal v) = q := rfl
 
-instance : Field (WithVal v) := fast_instance% ofVal_injective v |>.field _
+instance : Field (WithVal v) := wrap_instance% ofVal_injective v |>.field _
   (ofVal_zero _) (ofVal_one _) (ofVal_add _) (ofVal_mul _) (ofVal_neg _) (ofVal_sub _)
   (ofVal_inv _) (ofVal_div _)
   (ofVal_smul _) (ofVal_smul _) (ofVal_smul _) (ofVal_smul _) (ofVal_pow _) (ofVal_zpow _)
