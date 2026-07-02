@@ -40,6 +40,10 @@ theorem isCofinal_empty_iff : IsCofinal (∅ : Set α) ↔ IsEmpty α := by
   refine ⟨fun h ↦ ⟨fun a ↦ ?_⟩, fun h ↦ .of_isEmpty⟩
   simpa using h a
 
+theorem IsCofinal.nonempty [Nonempty α] {s : Set α} (hs : IsCofinal s) : s.Nonempty := by
+  inhabit α
+  exact (hs default).imp fun _ ↦ And.left
+
 @[simp]
 theorem isCofinal_singleton_iff {x : α} : IsCofinal {x} ↔ IsTop x := by
   simp [IsCofinal, IsTop]
@@ -160,9 +164,13 @@ theorem not_isCofinal_iff_bddAbove [NoMaxOrder α] {s : Set α} : ¬ IsCofinal s
   obtain ⟨z, hz⟩ := exists_gt x
   exact ⟨z, fun y hy ↦ (h hy).trans_lt hz⟩
 
+alias ⟨_, BddAbove.not_isCofinal⟩ := not_isCofinal_iff_bddAbove
+
 /-- In a linear order with no maximum, cofinal sets are the same as unbounded sets. -/
 theorem not_bddAbove_iff_isCofinal [NoMaxOrder α] {s : Set α} : ¬ BddAbove s ↔ IsCofinal s :=
   not_iff_comm.1 not_isCofinal_iff_bddAbove
+
+alias ⟨_, IsCofinal.not_bddAbove⟩ := not_bddAbove_iff_isCofinal
 
 /-- The set of "records" (the smallest inputs yielding the highest values) with respect to a
 well-ordering of `α` is a cofinal set. -/
@@ -173,5 +181,9 @@ theorem isCofinal_setOf_imp_lt (r : α → α → Prop) [h : IsWellFounded α r]
   refine ⟨b, fun c hc ↦ ?_, hb⟩
   by_contra! hc'
   exact hb' c (hb.trans hc') hc
+
+theorem isCofinal_range_of_strictMono [WellFoundedLT α] {f : α → α} (hf : StrictMono f) :
+    IsCofinal (range f) :=
+  fun x ↦ ⟨_, ⟨x, rfl⟩, hf.le_apply⟩
 
 end LinearOrder
