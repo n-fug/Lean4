@@ -36,7 +36,8 @@ open Topology
 /-- Notation for `=ᶠ[residual _]`. That is, eventual equality with respect to
 the filter of residual sets.
 In lemma names, this is called `residualEq`. -/
-scoped[Topology] notation:50 f " =ᵇ " g:50 => Filter.EventuallyEq (residual _) f g
+scoped[Topology] notation:50 s " =ᵇ " t:50 =>
+  Filter.EventuallyEq (residual _) (fun x => x ∈ s) (fun x => x ∈ t)
 
 /-- Notation to say that a property of points in a topological space holds
 almost everywhere in the sense of Baire category. That is, on a residual set. -/

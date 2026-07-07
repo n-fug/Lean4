@@ -637,7 +637,7 @@ theorem measure_iInter_eq_iInf_measure_iInter_le {α ι : Type*} {_ : Measurable
   · rw [iInter_comm]
     exact congrArg μ <| iInter_congr fun i ↦ (biInf_const nonempty_Ici).symm
   · exact fun i j h ↦ biInter_mono (Iic_subset_Iic.2 h) fun _ _ ↦ Set.Subset.rfl
-  · exact fun i ↦ .biInter (to_countable _) fun _ _ ↦ h _
+  · exact fun i ↦ .biInter (s := {j | j ≤ i}) (to_countable _) fun _ _ ↦ h _
   · refine hfin.imp fun k hk ↦ ne_top_of_le_ne_top hk <| measure_mono <| iInter₂_subset k ?_
     rfl
 
@@ -692,8 +692,9 @@ theorem tendsto_measure_iInter_le {α ι : Type*} {_ : MeasurableSpace α} {μ :
   refine .of_neBot_imp fun hne ↦ ?_
   cases atTop_neBot_iff.mp hne
   rw [measure_iInter_eq_iInf_measure_iInter_le hm hf]
-  exact tendsto_atTop_iInf
-    fun i j hij ↦ measure_mono <| biInter_subset_biInter_left fun k hki ↦ le_trans hki hij
+  exact tendsto_atTop_iInf fun i j hij ↦ measure_mono <|
+    biInter_subset_biInter_left (s := {k | k ≤ j}) (s' := {k | k ≤ i})
+      fun k hki ↦ le_trans hki hij
 
 /-- Some version of continuity of a measure in the empty set using the intersection along a set of
 sets. -/
@@ -702,8 +703,9 @@ theorem exists_measure_iInter_lt {α ι : Type*} {_ : MeasurableSpace α} {μ : 
     (hm : ∀ i, NullMeasurableSet (f i) μ) {ε : ℝ≥0∞} (hε : 0 < ε) (hfin : ∃ i, μ (f i) ≠ ∞)
     (hfem : ⋂ n, f n = ∅) : ∃ m, μ (⋂ n ≤ m, f n) < ε := by
   let F m := μ (⋂ n ≤ m, f n)
-  have hFAnti : Antitone F :=
-      fun i j hij => measure_mono (biInter_subset_biInter_left fun k hki => le_trans hki hij)
+  have hFAnti : Antitone F := fun i j hij => measure_mono <|
+    biInter_subset_biInter_left (s := {k | k ≤ j}) (s' := {k | k ≤ i})
+      fun k hki => le_trans hki hij
   suffices Filter.Tendsto F Filter.atTop (𝓝 0) by
     let _ := hfin.nonempty
     rw [ENNReal.tendsto_atTop_zero_iff_lt_of_antitone hFAnti] at this
@@ -1516,19 +1518,19 @@ theorem Ioi_ae_eq_Ici' (ha : μ {a} = 0) : Ioi a =ᵐˢ[μ] Ici a :=
   Iio_ae_eq_Iic' (α := αᵒᵈ) ha
 
 theorem Ioo_ae_eq_Ioc' (hb : μ {b} = 0) : Ioo a b =ᵐˢ[μ] Ioc a b :=
-  (ae_eq_refl _).inter (Iio_ae_eq_Iic' hb)
+  (ae_eq_refl (· ∈ Ioi a)).inter (Iio_ae_eq_Iic' hb)
 
 theorem Ioc_ae_eq_Icc' (ha : μ {a} = 0) : Ioc a b =ᵐˢ[μ] Icc a b :=
-  (Ioi_ae_eq_Ici' ha).inter (ae_eq_refl _)
+  (Ioi_ae_eq_Ici' ha).inter (ae_eq_refl (· ∈ Iic b))
 
 theorem Ioo_ae_eq_Ico' (ha : μ {a} = 0) : Ioo a b =ᵐˢ[μ] Ico a b :=
-  (Ioi_ae_eq_Ici' ha).inter (ae_eq_refl _)
+  (Ioi_ae_eq_Ici' ha).inter (ae_eq_refl (· ∈ Iio b))
 
 theorem Ioo_ae_eq_Icc' (ha : μ {a} = 0) (hb : μ {b} = 0) : Ioo a b =ᵐˢ[μ] Icc a b :=
   (Ioi_ae_eq_Ici' ha).inter (Iio_ae_eq_Iic' hb)
 
 theorem Ico_ae_eq_Icc' (hb : μ {b} = 0) : Ico a b =ᵐˢ[μ] Icc a b :=
-  (ae_eq_refl _).inter (Iio_ae_eq_Iic' hb)
+  (ae_eq_refl (· ∈ Ici a)).inter (Iio_ae_eq_Iic' hb)
 
 theorem Ico_ae_eq_Ioc' (ha : μ {a} = 0) (hb : μ {b} = 0) : Ico a b =ᵐˢ[μ] Ioc a b :=
   (Ioo_ae_eq_Ico' ha).symm.trans (Ioo_ae_eq_Ioc' hb)

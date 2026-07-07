@@ -726,9 +726,6 @@ theorem isClopen_setOfPred_meromorphicOrderAt_eq_top (hf : MeromorphicOn f U) :
     · exact h₂t'.sdiff isClosed_singleton
     · exact ⟨hw, mem_singleton_iff.not.1 (Subtype.coe_ne_coe.2 h₁w)⟩
 
-@[deprecated (since := "2026-07-03")] alias isClopen_setOf_meromorphicOrderAt_eq_top :=
-  isClopen_ofPred_meromorphicOrderAt_eq_top
-
 @[deprecated (since := "2026-07-09")]
 alias isClopen_setOf_meromorphicOrderAt_eq_top := isClopen_setOfPred_meromorphicOrderAt_eq_top
 

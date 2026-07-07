@@ -237,7 +237,8 @@ theorem GoodProducts.union : range C = ⋃ (e : {o' // o' < o}), (smaller C e.va
 The image of the `GoodProducts` in `C` is equivalent to the union of `smaller C o'` over all
 ordinals `o' < o`.
 -/
-noncomputable def GoodProducts.range_equiv : range C ≃ ⋃ (e : {o' // o' < o}), (smaller C e.val) :=
+noncomputable def GoodProducts.range_equiv :
+    range C ≃ ⋃ (e : {o' // o' < o}), (smaller C e.val) :=
   Equiv.setCongr (union C ho hsC)
 
 theorem GoodProducts.range_equiv_factorization :

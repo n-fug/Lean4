@@ -205,18 +205,18 @@ instance : Inhabited (Set α) :=
 theorem mem_of_mem_of_subset {x : α} {s t : Set α} (hx : x ∈ s) (h : s ⊆ t) : x ∈ t :=
   h hx
 
-theorem ofPred_injective : Function.Injective (@ofPred α) := injective_id
+theorem ofPred_injective : Function.Injective (@ofPred α) := fun _ _ h => congrArg Set.Mem h
 
 @[deprecated (since := "2026-07-09")] alias setOf_injective := ofPred_injective
 
-theorem ofPred_inj {p q : α → Prop} : { x | p x } = { x | q x } ↔ p = q := Iff.rfl
+theorem ofPred_inj {p q : α → Prop} : { x | p x } = { x | q x } ↔ p = q := ofPred_injective.eq_iff
 
 @[deprecated (since := "2026-07-09")] alias setOf_inj := ofPred_inj
 
 /-! ### Lemmas about `mem` and `ofPred` -/
 
 theorem ofPred_bijective : Bijective (ofPred : (α → Prop) → Set α) :=
-  bijective_id
+  ⟨ofPred_injective, fun s => ⟨s.Mem, rfl⟩⟩
 
 @[deprecated (since := "2026-07-09")] alias setOf_bijective := ofPred_bijective
 

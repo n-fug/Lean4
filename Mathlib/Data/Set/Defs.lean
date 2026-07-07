@@ -44,7 +44,8 @@ variable {α : Type u}
 /-- A set is a collection of elements of some type `α`.
 
 To build a set (an element of `Set α`) out of a predicate `p : α → Prop`, use the set builder
-notation `{a | p a}`. To get a predicate `α → Prop` from a set `s : Set α`, use the `∈` notation, as in `a ∈ s` or `(· ∈ s)`. -/
+notation `{a | p a}`. To get a predicate `α → Prop` from a set `s : Set α`, use the `∈` notation,
+as in `a ∈ s` or `(· ∈ s)`. -/
 @[use_set_notation_for_order]
 structure Set (α : Type u) where
   /-- Turn a predicate `p : α → Prop` into a set, also written as `{x | p x}` -/
