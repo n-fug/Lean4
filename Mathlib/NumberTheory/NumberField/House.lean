@@ -175,9 +175,7 @@ variable {α : Type*} {β : Type*} (a : Matrix α β (𝓞 K))
 private def a' : α → β → (K →+* ℂ) → (K →+* ℂ) → ℤ := fun k l r =>
   (newBasis K).repr (a k l * (newBasis K) r)
 
-
-set_option backward.privateInPublic true
-
+set_option backward.privateInPublic true in
 /-- `asiegel K a` is the integer matrix of the coefficients of the
 product of matrix elements and basis vectors. -/
 private def asiegel : Matrix (α × (K →+* ℂ)) (β × (K →+* ℂ)) ℤ := fun k l => a' K a k.1 l.1 l.2 k.2
@@ -209,6 +207,7 @@ variable {p q : ℕ} (h0p : 0 < p) (hpq : p < q) (x : β × (K →+* ℂ) → �
 /-- `ξ` is the product of `x (l, r)` and the `r`-th basis element of the newBasis of `K`. -/
 private def ξ : β → 𝓞 K := fun l => ∑ r : K →+* ℂ, x (l, r) * (newBasis K r)
 
+set_option backward.privateInPublic true in
 include hxl in
 private theorem ξ_ne_0 : ξ K x ≠ 0 := by
   intro H
@@ -223,6 +222,8 @@ private theorem lin_1 (l k r) : a k l * (newBasis K) r =
     ∑ u, (a' K a k l r u) * (newBasis K) u := by
   simp only [Basis.sum_repr (newBasis K) (a k l * (newBasis K) r), a', ← zsmul_eq_mul]
 
+-- Variable declarations can only reference public items.
+set_option backward.privateInPublic true
 variable [Fintype β] (cardβ : Fintype.card β = q) (hmulvec0 : asiegel K a *ᵥ x = 0)
 
 include hxl hmulvec0 in
