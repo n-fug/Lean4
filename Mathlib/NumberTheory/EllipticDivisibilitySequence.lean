@@ -10,6 +10,8 @@ public import Mathlib.Data.Nat.DvdSequence
 public import Mathlib.Data.Nat.EvenOddRec
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.Ring
+import Mathlib.Data.Int.ModEq
 
 /-!
 # Elliptic divisibility sequences
