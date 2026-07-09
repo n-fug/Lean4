@@ -320,7 +320,7 @@ theorem countable_meas_level_set_pos {α β : Type*} {_ : MeasurableSpace α} {�
 
 private lemma exists_ae_subset_biUnion_countable_of_isFiniteMeasure [IsFiniteMeasure μ]
     {C : Set (Set α)} (hC : ∀ s ∈ C, MeasurableSet s) :
-    ∃ D ⊆ C, D.Countable ∧ ∀ s ∈ C, s ≤ᵐ[μ] (⋃₀ D) := by
+    ∃ D ⊆ C, D.Countable ∧ ∀ s ∈ C, s ⊆ᵐ[μ] (⋃₀ D) := by
   let m := ⨆ D ∈ {D : Set (Set α) | D ⊆ C ∧ D.Countable}, μ (⋃₀ D)
   obtain ⟨D, D_mem, hD⟩ : ∃ D ∈ {D : Set (Set α) | D ⊆ C ∧ D.Countable}, μ (⋃₀ D) = m := by
     rcases eq_bot_or_bot_lt m with hm | hm
@@ -353,8 +353,8 @@ This lemma shows the existence of a measurable union, writing it as the union of
 subfamily. -/
 lemma exists_ae_subset_biUnion_countable [SFinite μ]
     {C : Set (Set α)} (hC : ∀ s ∈ C, MeasurableSet s) :
-    ∃ D ⊆ C, D.Countable ∧ ∀ s ∈ C, s ≤ᵐ[μ] (⋃₀ D) := by
-  have A n : ∃ D ⊆ C, D.Countable ∧ ∀ s ∈ C, s ≤ᵐ[sfiniteSeq μ n] (⋃₀ D) :=
+    ∃ D ⊆ C, D.Countable ∧ ∀ s ∈ C, s ⊆ᵐ[μ] (⋃₀ D) := by
+  have A n : ∃ D ⊆ C, D.Countable ∧ ∀ s ∈ C, s ⊆ᵐ[sfiniteSeq μ n] (⋃₀ D) :=
     exists_ae_subset_biUnion_countable_of_isFiniteMeasure hC
   choose D DC D_count hD using A
   refine ⟨⋃ n, D n, by simp [DC], by simp [D_count], fun s hs ↦ ?_⟩
