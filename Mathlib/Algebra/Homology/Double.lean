@@ -31,7 +31,7 @@ section
 variable {X₀ X₁ : C} (f : X₀ ⟶ X₁) {ι : Type*} {c : ComplexShape ι}
   {i₀ i₁ : ι} (hi₀₁ : c.Rel i₀ i₁)
 
-open Classical in
+open scoped Classical in
 /-- Given a complex shape `c`, two indices `i₀` and `i₁` such that `c.Rel i₀ i₁`,
 and `f : X₀ ⟶ X₁`, this is the homological complex which, if `i₀ ≠ i₁`, only
 consists of the map `f` in degrees `i₀` and `i₁`, and zero everywhere else. -/
@@ -111,7 +111,7 @@ variable {f} (h : i₀ ≠ i₁) {K : HomologicalComplex C c} (φ₀ : X₀ ⟶ 
   (comm : φ₀ ≫ K.d i₀ i₁ = f ≫ φ₁)
   (hφ : ∀ (k : ι), c.Rel i₁ k → φ₁ ≫ K.d i₁ k = 0)
 
-open Classical in
+open scoped Classical in
 /-- Constructor for morphisms from a homological complex `double f hi₀₁`. -/
 noncomputable def mkHomFromDouble : double f hi₀₁ ⟶ K where
   f k :=
@@ -188,7 +188,7 @@ noncomputable def evalCompCoyonedaCorepresentableBySingle (i : ι) [DecidableEq 
 
 variable [c.HasNoLoop]
 
-open Classical in
+open scoped Classical in
 /-- Given a complex shape `c : ComplexShape ι` (with no loop), `X : C` and `j : ι`,
 this is a quite explicit choice of corepresentative of the functor which sends
 `K : HomologicalComplex C c` to `X ⟶ K.X j`. -/

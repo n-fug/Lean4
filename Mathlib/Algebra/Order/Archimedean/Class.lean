@@ -260,7 +260,7 @@ instance [Subsingleton M] : Subsingleton (MulArchimedeanClass M) :=
 @[to_additive]
 noncomputable
 instance : LinearOrder (MulArchimedeanClass M) :=
-  open Classical in
+  open scoped Classical in
   -- TODO: why does `inferInstanceAs` not work here?
   fast_instance% (inferInstance : LinearOrder (Antisymmetrization (MulArchimedeanOrder M) (· ≤ ·)))
 

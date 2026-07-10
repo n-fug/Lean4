@@ -124,7 +124,7 @@ example {A} [Semiring A] [Fintype n] := (mulVecBilin A Aᵐᵒᵖ : Matrix m n A
 
 /-- `vecMulVec` as a bilinear map.
 
-When `A` is noncommutative, `R` and `S` can be instantiated as `vecMulVecLinear A Aᵐᵒᵖ`. -/
+When `A` is noncommutative, `R` and `S` can be instantiated as `vecMulVecBilin A Aᵐᵒᵖ`. -/
 @[simps]
 def vecMulVecBilin : (m → A) →ₗ[R] (n → A) →ₗ[S] Matrix m n A where
   toFun x :=
@@ -136,9 +136,9 @@ def vecMulVecBilin : (m → A) →ₗ[R] (n → A) →ₗ[S] Matrix m n A where
 
 example {A} [Semiring A] := (vecMulVecBilin A Aᵐᵒᵖ : (m → A) →ₗ[_] (n → A) →ₗ[_] _)
 
-/-- `vecMulVec` as a bilinear map.
+/-- `dotProduct` as a bilinear map.
 
-When `A` is noncommutative, `R` and `S` can be instantiated as `vecMulVecLinear A Aᵐᵒᵖ`. -/
+When `A` is noncommutative, `R` and `S` can be instantiated as `dotProductBilin A Aᵐᵒᵖ`. -/
 @[simps]
 def dotProductBilin [Fintype m] : (m → A) →ₗ[R] (m → A) →ₗ[S] A where
   toFun x :=

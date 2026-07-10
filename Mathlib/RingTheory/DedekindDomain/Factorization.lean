@@ -65,7 +65,6 @@ variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K] [IsFractio
 
 variable [IsDedekindDomain R] (v : HeightOneSpectrum R)
 
-open scoped Classical in
 /-- Given a maximal ideal `v` and an ideal `I` of `R`, `maxPowDividing` returns the maximal
   power of `v` dividing `I`. -/
 def IsDedekindDomain.HeightOneSpectrum.maxPowDividing (I : Ideal R) : Ideal R :=
@@ -91,7 +90,6 @@ theorem Ideal.finite_factors {I : Ideal R} (hI : I ≠ 0) :
   intro v w hvw
   exact Subtype.coe_injective (HeightOneSpectrum.ext (by simpa using hvw))
 
-open scoped Classical in
 /-- For every nonzero ideal `I` of `v`, there are finitely many maximal ideals `v` such that the
   multiplicity of `v` in the factorization of `I`, denoted `val_v(I)`, is nonzero. -/
 theorem Associates.finite_factors {I : Ideal R} (hI : I ≠ 0) :
@@ -107,7 +105,6 @@ theorem Associates.finite_factors {I : Ideal R} (hI : I ≠ 0) :
 
 namespace Ideal
 
-open scoped Classical in
 /-- For every nonzero ideal `I` of `v`, there are finitely many maximal ideals `v` such that
   `v^(val_v(I))` is not the unit ideal. -/
 @[fun_prop]
@@ -125,7 +122,6 @@ theorem hasFiniteMulSupport {I : Ideal R} (hI : I ≠ 0) :
 
 @[deprecated (since := "2026-03-03")] alias finite_mulSupport := hasFiniteMulSupport
 
-open scoped Classical in
 /-- For every nonzero ideal `I` of `v`, there are finitely many maximal ideals `v` such that
 `v^(val_v(I))`, regarded as a fractional ideal, is not `(1)`. -/
 @[fun_prop]
@@ -138,7 +134,6 @@ theorem hasFiniteMulSupport_coe {I : Ideal R} (hI : I ≠ 0) :
 
 @[deprecated (since := "2026-03-03")] alias finite_mulSupport_coe := hasFiniteMulSupport_coe
 
-open scoped Classical in
 /-- For every nonzero ideal `I` of `v`, there are finitely many maximal ideals `v` such that
 `v^-(val_v(I))` is not the unit ideal. -/
 @[fun_prop]
@@ -151,11 +146,11 @@ theorem hasFiniteMulSupport_inv {I : Ideal R} (hI : I ≠ 0) :
 
 @[deprecated (since := "2026-03-03")] alias finite_mulSupport_inv := hasFiniteMulSupport_inv
 
-open scoped Classical in
 /-- For every nonzero ideal `I` of `v`, `v^(val_v(I) + 1)` does not divide `∏_v v^(val_v(I))`. -/
 theorem finprod_not_dvd (I : Ideal R) (hI : I ≠ 0) :
     ¬v.asIdeal ^ ((Associates.mk v.asIdeal).count (Associates.mk I).factors + 1) ∣
         ∏ᶠ v : HeightOneSpectrum R, v.maxPowDividing I := by
+  classical
   have hf := hasFiniteMulSupport hI
   have h_ne_zero : v.maxPowDividing I ≠ 0 := pow_ne_zero _ v.ne_bot
   rw [← mul_finprod_cond_ne v hf, pow_add, pow_one, finprod_cond_ne _ _ hf]
@@ -182,7 +177,6 @@ theorem Associates.finprod_ne_zero (I : Ideal R) :
 
 namespace Ideal
 
-open scoped Classical in
 /-- The multiplicity of `v` in `∏_v v^(val_v(I))` equals `val_v(I)`. -/
 theorem finprod_count (I : Ideal R) (hI : I ≠ 0) : (Associates.mk v.asIdeal).count
     (Associates.mk (∏ᶠ v : HeightOneSpectrum R, v.maxPowDividing I)).factors =
@@ -230,7 +224,6 @@ theorem iInf_maxPowDividing_eq {I : Ideal R} (h0 : I ≠ 0) :
 
 variable (K)
 
-open scoped Classical in
 /-- The ideal `I` equals the finprod `∏_v v^(val_v(I))`, when both sides are regarded as fractional
 ideals of `R`. -/
 theorem finprod_heightOneSpectrum_factorization_coe {I : Ideal R} (hI : I ≠ 0) :
@@ -250,7 +243,6 @@ namespace FractionalIdeal
 open Int IsLocalization
 
 open Ideal in
-open scoped Classical in
 /-- If `I` is a nonzero fractional ideal, `a ∈ R`, and `J` is an ideal of `R` such that
 `I = a⁻¹J`, then `I` is equal to the product `∏_v v^(val_v(J) - val_v(a))`. -/
 theorem finprod_heightOneSpectrum_factorization {I : FractionalIdeal R⁰ K} (hI : I ≠ 0) {a : R}
@@ -270,7 +262,6 @@ theorem finprod_heightOneSpectrum_factorization {I : FractionalIdeal R⁰ K} (hI
   intro v
   rw [← zpow_add₀ ((@coeIdeal_ne_zero R _ K _ _ _ _).mpr v.ne_bot), sub_eq_add_neg]
 
-open scoped Classical in
 /-- For a nonzero `k = r/s ∈ K`, the fractional ideal `(k)` is equal to the product
 `∏_v v^(val_v(r) - val_v(s))`. -/
 theorem finprod_heightOneSpectrum_factorization_principal_fraction {n : R} (hn : n ≠ 0) (d : ↥R⁰) :
@@ -540,7 +531,6 @@ theorem count_finprod (exps : HeightOneSpectrum R → ℤ)
     rw [mem_mulSupport, h, zpow_zero] at hv
     exact hv (Eq.refl 1)
 
-open scoped Classical in
 theorem count_coe {J : Ideal R} (hJ : J ≠ 0) :
     count K v J = (Associates.mk v.asIdeal).count (Associates.mk J).factors := by
   rw [count_well_defined K (J := J) (a := 1), Ideal.span_singleton_one, sub_eq_self,
@@ -576,7 +566,6 @@ theorem finprod_heightOneSpectrum_factorization' {I : FractionalIdeal R⁰ K} (h
 
 variable {K}
 
-open scoped Classical in
 /-- If `I ≠ 0`, then `val_v(I) = 0` for all but finitely many maximal ideals of `R`. -/
 theorem finite_factors' {I : FractionalIdeal R⁰ K} (hI : I ≠ 0) {a : R}
     {J : Ideal R} (haJ : I = spanSingleton R⁰ ((algebraMap R K) a)⁻¹ * ↑J) :

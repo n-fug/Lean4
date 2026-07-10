@@ -84,11 +84,13 @@ lemma isEmbedding_toUniformOnFun :
       ((Π i, E i) →ᵤ[{s | IsVonNBounded 𝕜 s}] F)) :=
   isUniformEmbedding_toUniformOnFun.isEmbedding
 
+@[fun_prop]
 theorem uniformContinuous_coe_fun [∀ i, ContinuousSMul 𝕜 (E i)] :
     UniformContinuous (DFunLike.coe : ContinuousMultilinearMap 𝕜 E F → (Π i, E i) → F) :=
   (UniformOnFun.uniformContinuous_toFun sUnion_isVonNBounded_eq_univ).comp
     isUniformEmbedding_toUniformOnFun.uniformContinuous
 
+@[fun_prop]
 theorem uniformContinuous_eval_const [∀ i, ContinuousSMul 𝕜 (E i)] (x : Π i, E i) :
     UniformContinuous fun f : ContinuousMultilinearMap 𝕜 E F ↦ f x :=
   uniformContinuous_pi.1 uniformContinuous_coe_fun x
@@ -104,6 +106,7 @@ instance instUniformContinuousConstSMul {M : Type*}
   haveI := uniformContinuousConstSMul_of_continuousConstSMul M F
   isUniformEmbedding_toUniformOnFun.uniformContinuousConstSMul fun _ _ ↦ rfl
 
+@[fun_prop]
 theorem isUniformInducing_postcomp
     {G : Type*} [AddCommGroup G] [UniformSpace G] [IsUniformAddGroup G] [Module 𝕜 G]
     (g : F →L[𝕜] G) (hg : IsUniformInducing g) :
@@ -152,6 +155,7 @@ variable (𝕜' : Type*) [NontriviallyNormedField 𝕜'] [NormedAlgebra 𝕜' �
   [∀ i, ContinuousSMul 𝕜 (E i)]
 
 set_option backward.isDefEq.respectTransparency false in
+@[fun_prop]
 theorem isUniformEmbedding_restrictScalars :
     IsUniformEmbedding
       (restrictScalars 𝕜' : ContinuousMultilinearMap 𝕜 E F → ContinuousMultilinearMap 𝕜' E F) := by
@@ -161,6 +165,7 @@ theorem isUniformEmbedding_restrictScalars :
   convert! isUniformEmbedding_toUniformOnFun using 4 with s
   exact ⟨fun h ↦ h.extend_scalars _, fun h ↦ h.restrict_scalars _⟩
 
+@[fun_prop]
 theorem uniformContinuous_restrictScalars :
     UniformContinuous
       (restrictScalars 𝕜' : ContinuousMultilinearMap 𝕜 E F → ContinuousMultilinearMap 𝕜' E F) :=
