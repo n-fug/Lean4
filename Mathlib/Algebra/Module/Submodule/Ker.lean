@@ -120,6 +120,7 @@ theorem ker_codRestrict (p : Submodule R₂ M₂) (f : M →ₛₗ[τ₁₂] M�
 lemma ker_domRestrict (p : Submodule R M) (f : M →ₛₗ[τ₁₂] M₂) :
     ker (domRestrict f p) = (ker f).comap p.subtype := ker_comp ..
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ker_restrict {p : Submodule R M} {q : Submodule R₂ M₂} {f : M →ₛₗ[τ₁₂] M₂}
     (hf : ∀ x : M, x ∈ p → f x ∈ q) :
     ker (f.restrict hf) = (ker f).comap p.subtype := by
@@ -191,9 +192,6 @@ theorem injOn_of_disjoint_ker {p : Submodule R M} {s : Set M} (h : s ⊆ p)
 
 theorem ker_eq_bot {f : M →ₛₗ[τ₁₂] M₂} : ker f = ⊥ ↔ Injective f := by
   simpa [disjoint_iff_inf_le] using disjoint_ker_iff_injOn (f := f) (p := ⊤)
-
-@[deprecated (since := "2025-12-23")]
-alias _root_.LinearMapClass.ker_eq_bot := ker_eq_bot
 
 @[simp] lemma injective_domRestrict_iff {f : M →ₛₗ[τ₁₂] M₂} {S : Submodule R M} :
     Injective (f.domRestrict S) ↔ Disjoint S f.ker := by

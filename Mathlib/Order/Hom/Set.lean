@@ -23,6 +23,7 @@ variable {α β γ : Type*}
 
 namespace Set
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Sets on sum types are order-equivalent to pairs of sets on each summand. -/
 @[simps apply]
 def sumEquiv : Set (α ⊕ β) ≃o Set α × Set β where
@@ -191,6 +192,7 @@ instance subsingleton_of_wellFoundedGT' [LinearOrder β] [WellFoundedGT β] [Pre
 
 instance unique_of_wellFoundedGT [LinearOrder α] [WellFoundedGT α] : Unique (α ≃o α) := Unique.mk' _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An order isomorphism between lattices induces an order isomorphism between corresponding
 interval sublattices. -/
 protected def Iic [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
@@ -201,6 +203,7 @@ protected def Iic [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
   right_inv y := by simp
   map_rel_iff' := by simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An order isomorphism between lattices induces an order isomorphism between corresponding
 interval sublattices. -/
 protected def Ici [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
@@ -211,6 +214,7 @@ protected def Ici [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
   right_inv y := by simp
   map_rel_iff' := by simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An order isomorphism between lattices induces an order isomorphism between corresponding
 interval sublattices. -/
 protected def Icc [Lattice α] [Lattice β] (e : α ≃o β) (x y : α) :

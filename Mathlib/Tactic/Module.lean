@@ -137,6 +137,7 @@ theorem sub_eq_eval {R₁ R₂ S₁ S₂ : Type*} [AddCommGroup M] [Ring R] [Mod
 instance [Neg R] : Neg (NF R M) where
   neg l := l.map fun (a, x) ↦ (-a, x)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eval_neg [AddCommGroup M] [Ring R] [Module R M] (l : NF R M) : (-l).eval = - l.eval := by
   simp +instances only [NF.eval, List.map_map, List.sum_neg, NF.instNeg]
   congr
@@ -158,6 +159,7 @@ instance [Mul R] : SMul R (NF R M) where
 @[simp] theorem smul_apply [Mul R] (r : R) (l : NF R M) : r • l = l.map fun (a, x) ↦ (r * a, x) :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eval_smul [AddCommMonoid M] [Semiring R] [Module R M] {l : NF R M} {x : M} (h : x = l.eval)
     (r : R) : (r • l).eval = r • x := by
   unfold NF.eval at h ⊢
@@ -203,6 +205,7 @@ commutative semiring, by applying to each `S`-component the algebra-map from `S`
 def algebraMap [CommSemiring S] [Semiring R] [Algebra S R] (l : NF S M) : NF R M :=
   l.map (fun ⟨s, x⟩ ↦ (Algebra.algebraMap S R s, x))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eval_algebraMap [CommSemiring S] [Semiring R] [Algebra S R] [AddMonoid M] [SMul S M]
     [MulAction R M] [IsScalarTower S R M] (l : NF S M) :
     (l.algebraMap R).eval = l.eval := by
@@ -253,6 +256,7 @@ def onScalar {u₁ u₂ : Level} {R₁ : Q(Type u₁)} {R₂ : Q(Type u₂)} (l 
     qNF R₂ M :=
   l.map fun ((a, x), k) ↦ ((q($f $a), x), k)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two terms `l₁`, `l₂` of type `qNF R M`, i.e. lists of `(Q($R) × Q($M)) × ℕ`s (two `Expr`s
 and a natural number), construct another such term `l`, which will have the property that in the
 `$R`-module `$M`, the sum of the "linear combinations" represented by `l₁` and `l₂` is the linear
@@ -276,6 +280,7 @@ meta def add (iR : Q(Semiring $R)) : qNF R M → qNF R M → qNF R M
     else
       ((a₂, x₂), k₂) ::ᵣ add iR (((a₁, x₁), k₁) ::ᵣ t₁) t₂
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two terms `l₁`, `l₂` of type `qNF R M`, i.e. lists of `(Q($R) × Q($M)) × ℕ`s (two `Expr`s
 and a natural number), recursively construct a proof that in the `$R`-module `$M`, the sum of the
 "linear combinations" represented by `l₁` and `l₂` is the linear combination represented by
@@ -297,6 +302,7 @@ meta def mkAddProof {iR : Q(Semiring $R)} {iM : Q(AddCommMonoid $M)} (iRM : Q(Mo
       let pf := mkAddProof iRM (((a₁, x₁), k₁) ::ᵣ t₁) t₂
       (q(NF.add_eq_eval₃ ($a₂, $x₂) $pf):)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two terms `l₁`, `l₂` of type `qNF R M`, i.e. lists of `(Q($R) × Q($M)) × ℕ`s (two `Expr`s
 and a natural number), construct another such term `l`, which will have the property that in the
 `$R`-module `$M`, the difference of the "linear combinations" represented by `l₁` and `l₂` is the
@@ -321,6 +327,7 @@ def sub (iR : Q(Ring $R)) : qNF R M → qNF R M → qNF R M
     else
       ((q(-$a₂), x₂), k₂) ::ᵣ sub iR (((a₁, x₁), k₁) ::ᵣ t₁) t₂
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two terms `l₁`, `l₂` of type `qNF R M`, i.e. lists of `(Q($R) × Q($M)) × ℕ`s (two `Expr`s
 and a natural number), recursively construct a proof that in the `$R`-module `$M`, the difference
 of the "linear combinations" represented by `l₁` and `l₂` is the linear combination represented by

@@ -37,6 +37,7 @@ variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
 variable {X Y Z : C} (f : Y ⟶ X)
 
 /-- A predicate on arrows with codomain `X`. -/
+@[implicit_reducible]
 def Presieve (X : C) :=
   ∀ ⦃Y⦄, (Y ⟶ X) → Prop
 deriving CompleteLattice, Inhabited
@@ -565,6 +566,7 @@ def uncurry : Set (Σ Y, Y ⟶ X) :=
   · rintro ⟨i⟩; exact ⟨_, rfl, HEq.refl _⟩
   · rintro ⟨i, rfl, h⟩; rw [← eq_of_heq h]; exact ⟨i⟩
 
+set_option backward.isDefEq.respectTransparency.types false in
 lemma ofArrows_eq_ofArrows_uncurry {ι : Type*} {S : C} {X : ι → C} (f : ∀ i, X i ⟶ S) :
     ofArrows X f = ofArrows _ (fun i : (Presieve.ofArrows X f).uncurry ↦ f i.2.idx) := by
   refine le_antisymm (fun Z g hg ↦ ?_) fun Z g ⟨i⟩ ↦ .mk _
@@ -1256,12 +1258,10 @@ lemma mem_functorPushforward_inverse {X : D} {S : Sieve X} {e : C ≌ D} {f : Y 
 
 variable (e : C ≌ D)
 
-set_option backward.isDefEq.respectTransparency false in
 lemma functorPushforward_equivalence_eq_pullback {U : C} (S : Sieve U) :
     Sieve.functorPushforward e.inverse (Sieve.functorPushforward e.functor S) =
       Sieve.pullback (e.unitInv.app U) S := by ext; simp
 
-set_option backward.isDefEq.respectTransparency false in
 lemma pullback_functorPushforward_equivalence_eq {X : C} (S : Sieve X) :
     Sieve.pullback (e.unit.app X) (Sieve.functorPushforward e.inverse
       (Sieve.functorPushforward e.functor S)) = S := by ext; simp
@@ -1309,6 +1309,7 @@ def natTransOfLe {S T : Sieve X} (h : S ≤ T) : S.functor ⟶ T.functor where
 def functorInclusion (S : Sieve X) : S.functor ⟶ yoneda.obj X where
   app _ := ↾fun f ↦ f.1
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- Any component `f : Y ⟶ X` of the sieve `S` induces a natural transformation from `yoneda.obj Y`
 to the presheaf induced by `S`. -/
 @[simps]
@@ -1321,6 +1322,7 @@ theorem natTransOfLe_comm {S T : Sieve X} (h : S ≤ T) :
 
 open ConcreteCategory
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 /-- The presheaf induced by a sieve is a subobject of the yoneda embedding. -/
 instance functorInclusion_is_mono : Mono S.functorInclusion :=
@@ -1368,6 +1370,7 @@ def uliftFunctorInclusion (S : Sieve X) :
     S.uliftFunctor ⟶ uliftYoneda.{w}.obj X :=
   Functor.whiskerRight S.functorInclusion CategoryTheory.uliftFunctor
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- A variant of `Sieve.toFunctor` with universe lifting. -/
 @[simps]
 def toUliftFunctor (S : Sieve X) {Y : C} (f : Y ⟶ X) (hf : S f) :
@@ -1378,6 +1381,7 @@ theorem uliftNatTransOfLe_comm {S T : Sieve X} (h : S ≤ T) :
     uliftNatTransOfLe.{w} h ≫ uliftFunctorInclusion.{w} _ = uliftFunctorInclusion.{w} _ :=
   rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 /-- The presheaf induced by a sieve is a subobject of the yoneda embedding. -/
 instance uliftFunctorInclusion_is_mono (S : Sieve X) :
@@ -1427,6 +1431,7 @@ def shrinkFunctor [LocallySmall.{w} C] {X : C} (S : Sieve X) :
   map {Y Z} g f hf := by
     simpa [shrinkYonedaObjObjEquiv_obj_map] using S.downward_closed hf _
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 variable (S) in
 /-- `Sieve.shrinkFunctor` is compatible with universe lifting. -/
@@ -1446,6 +1451,7 @@ def shrinkFunctorUliftFunctorIso [LocallySmall.{w} C] [LocallySmall.{max w' w} C
       rw [shrinkYonedaObjObjEquiv_obj_map, shrinkYonedaObjObjEquiv_symm_comp]
       simp
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[reassoc]
 lemma shrinkFunctorUliftFunctorIso_inv_ι [LocallySmall.{w} C] [LocallySmall.{max w' w} C] :
     (shrinkFunctorUliftFunctorIso.{w, w'} S).inv ≫
@@ -1454,6 +1460,7 @@ lemma shrinkFunctorUliftFunctorIso_inv_ι [LocallySmall.{w} C] [LocallySmall.{ma
       shrinkYonedaUliftFunctorIso.{w, w'}.inv.app X :=
   rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 variable (S) in
 /-- Shrinking does nothing for the same universe level. -/
@@ -1484,6 +1491,7 @@ lemma Presieve.bind_ofArrows_le_bindOfArrows {ι : Type*} {X : C} (Z : ι → C)
   rw [← Sieve.ofArrows.fac hv', ← reassoc_of% hu]
   exact ⟨S, u, u' ≫ f _, ⟨_, _, h⟩, rfl⟩
 
+@[deprecated "Use Sieve.arrows_generate_map_eq_functorPushforward instead." (since := "2026-07-09")]
 lemma Presieve.functorPushforward_overForget
     {S : C} {X : Over S} (R : Presieve X) :
     Presieve.functorPushforward (Over.forget S) R =
@@ -1491,3 +1499,6 @@ lemma Presieve.functorPushforward_overForget
   (Sieve.arrows_generate_map_eq_functorPushforward (Over.forget S)).symm
 
 end CategoryTheory
+
+-- pushed over the edge in `nightly-testing`, should be split after landing on master
+set_option linter.style.longFile 1600

@@ -31,7 +31,7 @@ instance {k : ℕ} [Infinite α] [NeZero k] : Infinite (Sym α k) :=
 theorem natCard_sym_eq_multichoose (k : ℕ) :
     Nat.card (Sym α k) = multichoose (Nat.card α) k := by
   cases finite_or_infinite α
-  · obtain ⟨_⟩ := nonempty_fintype α; letI := Classical.decEq α
+  · obtain ⟨_⟩ := nonempty_fintype α; let := Classical.decEq α
     simp_rw [Nat.card_eq_fintype_card]
     exact card_sym_eq_multichoose _ _
   cases k <;> simp
@@ -61,7 +61,7 @@ theorem natCard_subtype_diag : Nat.card { a : Sym2 α // a.IsDiag } = Nat.card �
 theorem natCard_subtype_not_diag :
     Nat.card { a : Sym2 α // ¬a.IsDiag } = (Nat.card α).choose 2 := by
   cases finite_or_infinite α
-  · obtain ⟨_⟩ := nonempty_fintype α; letI := Classical.decEq α
+  · obtain ⟨_⟩ := nonempty_fintype α; let := Classical.decEq α
     simp_rw [Nat.card_eq_fintype_card]
     exact card_subtype_not_diag
   · simp
@@ -75,7 +75,7 @@ lemma ncard_diagSet_compl : (diagSetᶜ : Set (Sym2 α)).ncard = (Nat.card α).c
 /-- Type **stars and bars** for the case `n = 2`. -/
 protected theorem natCard : Nat.card (Sym2 α) = Nat.choose (Nat.card α + 1) 2 := by
   cases finite_or_infinite α
-  · obtain ⟨_⟩ := nonempty_fintype α; letI := Classical.decEq α
+  · obtain ⟨_⟩ := nonempty_fintype α; let := Classical.decEq α
     simp_rw [Nat.card_eq_fintype_card]
     exact Sym2.card
   · simp

@@ -166,7 +166,7 @@ lemma IsDiscrete.preimage' {s : Set Y} (hs : IsDiscrete s)
 
 lemma IsDiscrete.eq_of_specializes (hs : IsDiscrete s)
     {a b : X} (hab : a ⤳ b) (ha : a ∈ s) (hb : b ∈ s) : a = b := by
-  letI := hs.1
+  let := hs.1
   simpa only [← Topology.IsInducing.subtypeVal.specializes_iff, hab, Subtype.mk.injEq,
     true_iff] using specializes_iff_eq (X := s) (x := ⟨a, ha⟩) (y := ⟨b, hb⟩)
 
@@ -374,7 +374,7 @@ lemma mem_codiscrete {S : Set X} :
     S ∈ codiscrete X ↔ ∀ x, Disjoint (𝓝[≠] x) (𝓟 Sᶜ) := by
   simp [codiscrete, mem_codiscreteWithin, compl_eq_univ_sdiff]
 
-lemma Disjoint.eventualy_nhdsWithin_specializes
+lemma Disjoint.eventually_nhdsWithin_specializes
     {p : X} {s : Set X} (hs : Disjoint (𝓝[s] p) cofinite) :
     ∀ᶠ x in 𝓝[s] p, x ⤳ p := by
   obtain ⟨t, h₁t, h₂t⟩ := disjoint_cofinite_right.mp hs
@@ -392,7 +392,7 @@ lemma Disjoint.nhdsWithin_eq_of_cofinite
     {p : X} {s : Set X} (hs : Disjoint (𝓝[s] p) cofinite) :
     𝓝[s] p = 𝓟 ({x | x ⤳ p} ∩ s) := by
   apply le_antisymm
-  · simpa using ⟨hs.eventualy_nhdsWithin_specializes, self_mem_nhdsWithin⟩
+  · simpa using ⟨hs.eventually_nhdsWithin_specializes, self_mem_nhdsWithin⟩
   · rw [← inf_principal, nhdsWithin]
     gcongr
     rw [Filter.principal_le_iff]
@@ -537,8 +537,5 @@ theorem discreteTopology_iUnion_finite {ι : Type*} [Finite ι] {s : ι → Set 
     DiscreteTopology (⋃ i, s i) := by
   simp only [← isDiscrete_iff_discreteTopology] at *
   exact .iUnion hs hs'
-
-@[deprecated (since := "2025-11-28")]
-alias discreteTopology_iUnion_fintype := discreteTopology_iUnion_finite
 
 end discrete_union

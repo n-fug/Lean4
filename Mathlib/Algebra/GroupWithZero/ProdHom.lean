@@ -95,6 +95,7 @@ lemma inr_apply_unit [DecidablePred fun x : H₀ ↦ x = 0] (x : H₀ˣ) :
 @[simp] lemma fst_apply_coe (x : G₀ˣ × H₀ˣ) : fst G₀ H₀ x = x.fst := by rfl
 @[simp] lemma snd_apply_coe (x : G₀ˣ × H₀ˣ) : snd G₀ H₀ x = x.snd := by rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem fst_inl [DecidablePred fun x : G₀ ↦ x = 0] (x : G₀) :
     fst _ H₀ (inl _ _ x) = x := by
@@ -106,6 +107,7 @@ theorem fst_comp_inl [DecidablePred fun x : G₀ ↦ x = 0] :
     (fst ..).comp (inl G₀ H₀) = .id _ :=
   ext fun _ ↦ fst_inl _
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem snd_comp_inl [DecidablePred fun x : G₀ ↦ x = 0] :
     (snd ..).comp (inl G₀ H₀) = 1 := by
@@ -117,6 +119,7 @@ theorem snd_inl_apply_of_ne_zero [DecidablePred fun x : G₀ ↦ x = 0] {x : G�
     snd _ _ (inl _ H₀ x) = 1 := by
   rw [← comp_apply, snd_comp_inl, one_apply_of_ne_zero hx]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem fst_comp_inr [DecidablePred fun x : H₀ ↦ x = 0] :
     (fst ..).comp (inr G₀ H₀) = 1 := by
@@ -128,6 +131,7 @@ theorem fst_inr_apply_of_ne_zero [DecidablePred fun x : H₀ ↦ x = 0] {x : H�
     fst _ _ (inr G₀ _ x) = 1 := by
   rw [← comp_apply, fst_comp_inr, one_apply_of_ne_zero hx]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem snd_inr [DecidablePred fun x : H₀ ↦ x = 0] (x : H₀) :
     snd _ _ (inr G₀ _ x) = x := by
@@ -157,10 +161,12 @@ lemma snd_surjective : Function.Surjective (snd G₀ H₀) := by
 
 variable [DecidablePred fun x : G₀ ↦ x = 0] [DecidablePred fun x : H₀ ↦ x = 0]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem inl_mul_inr_eq_mk_of_unit (m : G₀ˣ) (n : H₀ˣ) :
     (inl G₀ H₀ m * inr G₀ H₀ n) = (m, n) := by
   simp [inl, WithZero.withZeroUnitsEquiv, inr, ← WithZero.coe_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem commute_inl_inr (m : G₀) (n : H₀) : Commute (inl G₀ H₀ m) (inr G₀ H₀ n) := by
   obtain rfl | ⟨_, rfl⟩ := GroupWithZero.eq_zero_or_unit m <;>
   obtain rfl | ⟨_, rfl⟩ := GroupWithZero.eq_zero_or_unit n <;>

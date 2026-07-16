@@ -130,6 +130,7 @@ theorem isLocallyArtinian_iff_openCover (𝒰 : X.OpenCover) :
     obtain ⟨i, x, rfl⟩ := 𝒰.exists_eq x
     simpa using (𝒰.f i).isOpenEmbedding.isOpenMap _ (isOpen_discrete {x})
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem isLocallyArtinian_iff_of_isOpenCover {ι : Type*} {U : ι → X.Opens}
     (hU : TopologicalSpace.IsOpenCover U) (hU' : ∀ i, IsAffineOpen (U i)) :
     IsLocallyArtinian X ↔ ∀ i, IsArtinianRing Γ(X, U i) := by
@@ -140,6 +141,7 @@ theorem isLocallyArtinian_iff_of_isOpenCover {ι : Type*} {U : ι → X.Opens}
 
 instance (priority := low) {X : Scheme} [IsEmpty X] : IsLocallyArtinian X where
 
+set_option backward.isDefEq.respectTransparency.types false in
 instance (priority := low) {X : Scheme} [DiscreteTopology X] [IsReduced X] :
     IsLocallyArtinian X := by
   wlog hX : Subsingleton X generalizing X

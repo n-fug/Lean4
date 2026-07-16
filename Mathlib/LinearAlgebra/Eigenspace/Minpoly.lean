@@ -96,6 +96,7 @@ theorem hasEigenvalue_iff_isRoot : f.HasEigenvalue μ ↔ (minpoly R f).IsRoot �
 
 variable (f)
 
+set_option backward.isDefEq.respectTransparency.types false in
 lemma finite_hasEigenvalue : Set.Finite f.HasEigenvalue := by
   have h : minpoly R f ≠ 0 := minpoly.ne_zero (Algebra.IsIntegral.isIntegral (R := R) f)
   convert! (minpoly R f).rootSet_finite R
@@ -135,6 +136,7 @@ end Module
 
 section FiniteSpectrum
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- An endomorphism of a finite-dimensional vector space has a finite spectrum. -/
 theorem Module.End.finite_spectrum {K : Type v} {V : Type w} [Field K] [AddCommGroup V]
     [Module K V] [FiniteDimensional K V] (f : Module.End K V) :

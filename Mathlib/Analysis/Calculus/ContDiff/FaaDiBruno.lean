@@ -440,6 +440,7 @@ lemma index_extendMiddle_zero (c : OrderedFinpartition n) (i : Fin c.length) :
   contrapose! this
   exact (c.extendMiddle i).emb_ne_emb_of_ne (Ne.symm this)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma range_emb_extendMiddle_ne_singleton_zero (c : OrderedFinpartition n) (i j : Fin c.length) :
     range ((c.extendMiddle i).emb j) ≠ {0} := by
   intro h
@@ -1060,7 +1061,6 @@ theorem HasFTaylorSeriesUpToOn.comp {n : WithTop ℕ∞} {g : F → G} {f : E �
   `faaDiBruno_aux1` and `faaDiBruno_aux2`, with terms of the same form at order `m+1`. Then, one
   needs to check that one gets each term once and exactly once, which is given by the bijection
   `OrderedFinpartition.extendEquiv m`. -/
-  classical
   constructor
   · intro x hx
     simp [FormalMultilinearSeries.taylorComp, default, HasFTaylorSeriesUpToOn.zero_eq' hg (h hx)]

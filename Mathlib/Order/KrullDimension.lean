@@ -136,6 +136,7 @@ lemma coheight_le_iff {a : α} {n : ℕ∞} :
     coheight a ≤ n ↔ ∀ ⦃p : LTSeries α⦄, a ≤ p.head → p.length ≤ n := by
   rw [coheight_eq, iSup₂_le_iff]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma height_le {a : α} {n : ℕ∞} (h : ∀ (p : LTSeries α), p.last = a → p.length ≤ n) :
     height a ≤ n := by
   apply height_le_iff.mpr
@@ -191,6 +192,7 @@ lemma coheight_le {a : α} {n : ℕ∞} (h : ∀ (p : LTSeries α), p.head = a �
     coheight a ≤ n :=
   coheight_le_iff'.mpr h
 
+set_option backward.isDefEq.respectTransparency false in
 lemma length_le_height {p : LTSeries α} {x : α} (hlast : p.last ≤ x) :
     p.length ≤ height x := by
   by_cases hlen0 : p.length ≠ 0
@@ -708,7 +710,7 @@ lemma krullDim_eq_top [InfiniteDimensionalOrder α] :
     krullDim α = ⊤ :=
   le_antisymm le_top <| le_iSup_iff.mpr <| fun m hm ↦ match m, hm with
   | ⊥, hm => False.elim <| by
-    haveI : Inhabited α := ⟨LTSeries.withLength _ 0 0⟩
+    have : Inhabited α := ⟨LTSeries.withLength _ 0 0⟩
     exact not_le_of_gt (WithBot.bot_lt_coe _ : ⊥ < (0 : WithBot (WithTop ℕ))) <| hm default
   | ⊤, _ => le_refl _
   | m, hm => by
@@ -1004,6 +1006,7 @@ lemma coheight_int (n : ℤ) : coheight n = ⊤ := coheight_of_noMaxOrder ..
 
 lemma krullDim_int : krullDim ℤ = ⊤ := krullDim_of_noMaxOrder ..
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma height_coe_withBot (x : α) : height (x : WithBot α) = height x + 1 := by
   apply le_antisymm
   · apply height_le

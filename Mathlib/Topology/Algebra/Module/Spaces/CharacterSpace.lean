@@ -102,6 +102,7 @@ noncomputable def toNonUnitalAlgHom (φ : characterSpace 𝕜 A) : A →ₙₐ[�
 theorem coe_toNonUnitalAlgHom (φ : characterSpace 𝕜 A) : ⇑(toNonUnitalAlgHom φ) = φ :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 instance instIsEmpty [Subsingleton A] : IsEmpty (characterSpace 𝕜 A) :=
   ⟨fun φ => φ.prop.1 <|
     ContinuousLinearMap.ext fun x => by

@@ -88,6 +88,7 @@ def Spec.sheafedSpaceObj (R : CommRingCat.{u}) : SheafedSpace CommRingCat where
   presheaf := (structureSheaf R).1
   IsSheaf := (structureSheaf R).2
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- The induced map of a ring homomorphism on the ring spectra, as a morphism of sheafed spaces.
 -/
 @[simps hom_base hom_c_app]
@@ -153,10 +154,12 @@ theorem Spec.toPresheafedSpace_map (R S : CommRingCat.{u}ᵒᵖ) (f : R ⟶ S) :
     Spec.toPresheafedSpace.map f = (Spec.sheafedSpaceMap f.unop).hom :=
   rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem Spec.toPresheafedSpace_map_op (R S : CommRingCat.{u}) (f : R ⟶ S) :
     Spec.toPresheafedSpace.map f.op = (Spec.sheafedSpaceMap f).hom :=
   rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem Spec.basicOpen_hom_ext {X : RingedSpace.{u}} {R : CommRingCat.{u}}
     {α β : X ⟶ Spec.sheafedSpaceObj R} (w : α.hom.base = β.hom.base)
     (h : ∀ r : R,
@@ -173,6 +176,7 @@ theorem Spec.basicOpen_hom_ext {X : RingedSpace.{u}} {R : CommRingCat.{u}}
     apply (StructureSheaf.to_basicOpen_epi R r).1
     simpa using! h r
 
+set_option backward.isDefEq.respectTransparency.types false in
 -- `simps!` generates some garbage lemmas, so choose manually,
 -- if more is needed, add them here
 /-- The spectrum of a commutative ring, as a `LocallyRingedSpace`. -/
@@ -198,6 +202,7 @@ lemma Spec.locallyRingedSpaceObj_presheaf_map' (R : Type u) [CommRing R] {U V} (
     (Spec.locallyRingedSpaceObj <| CommRingCat.of R).presheaf.map i =
     (structureSheaf R).1.map i := rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[elementwise]
 theorem stalkMap_toStalk {R S : CommRingCat.{u}} (f : R ⟶ S) (p : PrimeSpectrum S) :
     toStalk R (PrimeSpectrum.comap f.hom p) ≫ (Spec.sheafedSpaceMap f).hom.stalkMap p =
@@ -268,13 +273,16 @@ section SpecΓ
 
 open AlgebraicGeometry.LocallyRingedSpace
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- The counit morphism `R ⟶ Γ(Spec R)` given by `AlgebraicGeometry.StructureSheaf.toOpen`. -/
 def toSpecΓ (R : CommRingCat.{u}) : R ⟶ Γ.obj (op (Spec.toLocallyRingedSpace.obj (op R))) :=
   CommRingCat.ofHom (algebraMap _ _)
 
+set_option backward.isDefEq.respectTransparency.types false in
 instance isIso_toSpecΓ (R : CommRingCat.{u}) : IsIso (toSpecΓ R) :=
   (ConcreteCategory.isIso_iff_bijective _).mpr algebraMap_obj_top_bijective
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[reassoc]
 theorem Spec_Γ_naturality {R S : CommRingCat.{u}} (f : R ⟶ S) :
     f ≫ toSpecΓ S = toSpecΓ R ≫ Γ.map (Spec.toLocallyRingedSpace.map f.op).op := by
@@ -284,6 +292,9 @@ theorem Spec_Γ_naturality {R S : CommRingCat.{u}} (f : R ⟶ S) :
   erw [comap_apply]
   apply Localization.localRingHom_to_map
 
+#adaptation_note
+/-- `respectTransparency.types true` changes the auto-generated lemmas' signature -/
+set_option backward.isDefEq.respectTransparency.types false in
 /-- The counit (`SpecΓIdentity.inv.op`) of the adjunction `Γ ⊣ Spec` is an isomorphism. -/
 @[simps! hom_app inv_app]
 def LocallyRingedSpace.SpecΓIdentity : Spec.toLocallyRingedSpace.rightOp ⋙ Γ ≅ 𝟭 _ :=
@@ -314,6 +325,7 @@ namespace StructureSheaf
 
 variable {R S : CommRingCat.{u}} (f : R ⟶ S) (p : PrimeSpectrum R)
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- For an algebra `f : R →+* S`, this is the ring homomorphism `S →+* (f∗ 𝒪ₛ)ₚ` for a `p : Spec R`.
 This is shown to be the localization at `p` in `isLocalizedModule_toPushforwardStalkAlgHom`.
 -/
@@ -341,6 +353,7 @@ theorem algebraMap_pushforward_stalk :
 variable (R S)
 variable [Algebra R S]
 
+set_option backward.isDefEq.respectTransparency.types false in
 /--
 This is the `AlgHom` version of `toPushforwardStalk`, which is the map `S ⟶ (f∗ 𝒪ₛ)ₚ` for some
 algebra `R ⟶ S` and some `p : Spec R`.
@@ -351,6 +364,7 @@ def toPushforwardStalkAlgHom :
   { (StructureSheaf.toPushforwardStalk (CommRingCat.ofHom (algebraMap R S)) p).hom with
     commutes' := fun _ => rfl }
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem isLocalizedModule_toPushforwardStalkAlgHom_aux (y) :
     ∃ x : S × p.asIdeal.primeCompl, x.2 • y = toPushforwardStalkAlgHom R S p x.1 := by
   obtain ⟨U, hp, s, e⟩ := TopCat.Presheaf.exists_germ_eq _ y
@@ -383,6 +397,7 @@ theorem isLocalizedModule_toPushforwardStalkAlgHom_aux (y) :
   rw [← map_pow (algebraMap R S)] at hsn
   congr 1
 
+set_option backward.isDefEq.respectTransparency.types false in
 instance isLocalizedModule_toPushforwardStalkAlgHom :
     IsLocalizedModule p.asIdeal.primeCompl (toPushforwardStalkAlgHom R S p).toLinearMap := by
   apply IsLocalizedModule.mkOfAlgebra

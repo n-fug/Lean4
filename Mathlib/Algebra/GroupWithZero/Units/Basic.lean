@@ -510,7 +510,7 @@ variable {M : Type*} [Nontrivial M]
 open scoped Classical in
 /-- Constructs a `GroupWithZero` structure on a `MonoidWithZero`
   consisting only of units and 0. -/
-@[implicit_reducible]
+@[instance_reducible]
 noncomputable def groupWithZeroOfIsUnitOrEqZero [hM : MonoidWithZero M]
     (h : ∀ a : M, IsUnit a ∨ a = 0) : GroupWithZero M :=
   { hM with
@@ -522,7 +522,7 @@ noncomputable def groupWithZeroOfIsUnitOrEqZero [hM : MonoidWithZero M]
 
 /-- Constructs a `CommGroupWithZero` structure on a `CommMonoidWithZero`
   consisting only of units and 0. -/
-@[implicit_reducible]
+@[instance_reducible]
 noncomputable def commGroupWithZeroOfIsUnitOrEqZero [hM : CommMonoidWithZero M]
     (h : ∀ a : M, IsUnit a ∨ a = 0) : CommGroupWithZero M :=
   { groupWithZeroOfIsUnitOrEqZero h, hM with }

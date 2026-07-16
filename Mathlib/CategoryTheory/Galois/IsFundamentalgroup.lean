@@ -54,7 +54,7 @@ namespace CategoryTheory
 
 namespace PreGaloisCategory
 
-open Limits Functor
+open Limits
 
 variable {C : Type u₁} [Category.{u₂} C] (F : C ⥤ FintypeCat.{w})
 
@@ -130,6 +130,7 @@ lemma toAut_continuous [TopologicalSpace G] [IsTopologicalGroup G]
 
 variable {G}
 
+set_option backward.isDefEq.respectTransparency.types false in
 lemma action_ext_of_isGalois {t : F ⟶ F} {X : C} [IsGalois X] {g : G} (x : F.obj X)
     (hg : g • x = t.app X x) (y : F.obj X) : g • y = t.app X y := by
   obtain ⟨φ, (rfl : F.map φ.hom y = x)⟩ := MulAction.exists_smul_eq (Aut X) y x

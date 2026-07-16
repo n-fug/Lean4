@@ -335,7 +335,6 @@ variable {ι : Type*} {C : Type u} [Category.{v} C] [Preadditive C]
 
 instance quasiIsoAt_hom (n : ι) [K.HasHomology n] [L.HasHomology n] :
     QuasiIsoAt e.hom n := by
-  classical
   rw [quasiIsoAt_iff, ShortComplex.quasiIso_iff]
   exact (e.toHomologyIso n).isIso_hom
 

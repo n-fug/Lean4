@@ -552,17 +552,10 @@ def diagSet : Set (Sym2 α) := {z | z.IsDiag}
 
 @[simp] lemma mem_diagSet : z ∈ diagSet ↔ z.IsDiag := .rfl
 
-@[deprecated mem_diagSet (since := "2025-12-10")]
-theorem mem_diagSet_iff_isDiag (z : Sym2 α) : z ∈ diagSet ↔ z.IsDiag := .rfl
-
 @[simp] lemma range_diag : .range (diag : α → Sym2 α) = diagSet := by
   ext ⟨a, b⟩; simp [diag, eq_comm]
 
 theorem diagSet_eq_setOf_isDiag : diagSet = {z : Sym2 α | z.IsDiag} := rfl
-
-@[deprecated Set.compl_setOf (since := "2025-12-10")]
-theorem diagSet_compl_eq_setOf_not_isDiag : diagSetᶜ = {z : Sym2 α | ¬z.IsDiag} :=
-  congrArg _ diagSet_eq_setOf_isDiag
 
 theorem diagSet_eq_univ_of_subsingleton [Subsingleton α] : @diagSet α = Set.univ := by ext; simp
 
@@ -610,6 +603,7 @@ theorem mem_fromRel_comap {r : β → β → Prop} (sym : Std.Symm r) (f : α �
   cases z
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem fromRel_bot : fromRel (α := α) (r := ⊥) inferInstance = ∅ :=
   Set.eq_empty_of_forall_notMem <| Sym2.ind <| by simp
 
@@ -619,6 +613,7 @@ theorem fromRel_bot_iff {sym : Std.Symm r} : fromRel sym = ∅ ↔ r = ⊥ := by
   ext x y
   simpa [h] using fromRel_prop (sym := sym)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem fromRel_top : fromRel (α := α) (r := ⊤) inferInstance = .univ :=
   Set.eq_univ_of_forall <| Sym2.ind <| by simp
 
@@ -628,12 +623,14 @@ theorem fromRel_top_iff {sym : Std.Symm r} : fromRel sym = .univ ↔ r = ⊤ := 
   ext x y
   simpa [h] using fromRel_prop (sym := sym)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem fromRel_ne : fromRel (α := α) (r := Ne) inferInstance = {z | ¬IsDiag z} := by
   ext z; exact z.ind (by simp)
 
 lemma diagSet_eq_fromRel_eq : diagSet = fromRel (α := α) eq_equivalence.stdSymm := by
   ext ⟨a, b⟩; simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma diagSet_compl_eq_fromRel_ne : diagSetᶜ = fromRel (α := α) (r := Ne) inferInstance := by
   ext ⟨a, b⟩; simp
 
@@ -646,14 +643,6 @@ lemma diagSet_compl_eq_fromRel_ne : diagSetᶜ = fromRel (α := α) (r := Ne) in
 
 @[simp] lemma fromRel_subset_compl_diagSet (hr : Std.Symm r) :
     fromRel hr ⊆ diagSetᶜ ↔ Std.Irrefl r := by simp [Set.subset_compl_iff_disjoint_left]
-
-@[deprecated diagSet_subset_fromRel (since := "2025-12-10")]
-theorem reflexive_iff_diagSet_subset_fromRel (sym : Std.Symm r) :
-    Std.Refl r ↔ diagSet ⊆ fromRel sym := by simp
-
-@[deprecated fromRel_subset_compl_diagSet (since := "2025-12-10")]
-theorem irreflexive_iff_fromRel_subset_diagSet_compl (sym : Std.Symm r) :
-    Std.Irrefl r ↔ fromRel sym ⊆ diagSetᶜ := by simp
 
 theorem fromRel_irrefl {sym : Std.Symm r} : Std.Irrefl r ↔ ∀ {z}, z ∈ fromRel sym → ¬IsDiag z where
   mp := by intro ⟨h⟩; apply Sym2.ind; aesop
@@ -753,6 +742,7 @@ variable (α) in
 def toRelOrderEmbedding : Set (Sym2 α) ↪o (α → α → Prop) :=
   .ofMapLEIff ToRel toRel_mono_iff
 
+set_option backward.isDefEq.respectTransparency false in
 variable (α) in
 /-- `fromRel`/`ToRel` induce an order isomorphism between symmetric relations and `Sym2` sets -/
 @[simps]

@@ -81,6 +81,7 @@ theorem toDual_apply (f : Dual R V) :
   intro v
   simp [toDual_comp_apply, Algebra.algebraMap_eq_smul_one]
 
+set_option backward.isDefEq.respectTransparency false in
 set_option backward.privateInPublic true in
 /-- The linear map underlying `IsBaseChange.toDualBaseChangeLinearEquiv`. -/
 private noncomputable def toDualBaseChangeAux :
@@ -95,6 +96,7 @@ private noncomputable def toDualBaseChangeAux :
     | add x y hx hy => aesop
     | tmul b f => simp [TensorProduct.smul_tmul', mul_smul]
 
+set_option backward.isDefEq.respectTransparency false in
 set_option backward.privateInPublic true in
 private theorem toDualBaseChangeAux_tmul (a : A) (f : Dual R V) (v : V) :
     (ibc.toDualBaseChangeAux (a ⊗ₜ[R] f)) (j v) = a * algebraMap R A (f v) := by
@@ -130,6 +132,7 @@ theorem toDualBaseChange_tmul (a : A) (f : Dual R V) (v : V) :
     (ibc.toDualBaseChange (a ⊗ₜ[R] f)) (j v) = a * algebraMap R A (f v) :=
   toDualBaseChangeAux_tmul ibc a f v
 
+set_option backward.isDefEq.respectTransparency false in
 theorem dual : IsBaseChange A (ibc.toDual) := by
   apply of_equiv (toDualBaseChange ibc)
   intro f

@@ -68,6 +68,7 @@ theorem ofMulAction_apply {G : Type*} {H : Type*} [Monoid G] [MulAction G H] (g 
     (ofMulAction G H).ρ g x = (g • x : H) :=
   rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- Given a family `F` of types with `G`-actions, this is the limit cone demonstrating that the
 product of `F` as types is a product in the category of `G`-sets. -/
 def ofMulActionLimitCone {ι : Type v} (G : Type max v u) [Monoid G] (F : ι → Type max v u)
@@ -130,6 +131,7 @@ notation:10 G:10 " ⧸ₐ " H:10 => Action.FintypeCat.ofMulAction G (FintypeCat.
 
 variable {G : Type*} [Group G] (H N : Subgroup G) [Fintype (G ⧸ N)]
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- If `N` is a normal subgroup of `G`, then this is the group homomorphism
 sending an element `g` of `G` to the `G`-endomorphism of `G ⧸ₐ N` given by
 multiplication with `g⁻¹` on the right. -/
@@ -159,9 +161,11 @@ def toEndHom [N.Normal] : G →* End (G ⧸ₐ N) where
     change ⟦x * (σ * τ)⁻¹⟧ = ⟦x * τ⁻¹ * σ⁻¹⟧
     rw [mul_inv_rev, mul_assoc]
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[simp]
 lemma toEndHom_apply [N.Normal] (g h : G) : (toEndHom N g).hom ⟦h⟧ = ⟦h * g⁻¹⟧ := rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 variable {N} in
 lemma toEndHom_trivial_of_mem [N.Normal] {n : G} (hn : n ∈ N) : toEndHom N n = 𝟙 (G ⧸ₐ N) := by
   apply Action.hom_ext
@@ -175,6 +179,7 @@ def quotientToEndHom [N.Normal] : H ⧸ Subgroup.subgroupOf N H →* End (G ⧸�
   QuotientGroup.lift (Subgroup.subgroupOf N H) ((toEndHom N).comp H.subtype) <| fun _ uinU' ↦
     toEndHom_trivial_of_mem uinU'
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[simp]
 lemma quotientToEndHom_mk [N.Normal] (x : H) (g : G) :
     (quotientToEndHom H N ⟦x⟧).hom ⟦g⟧ = ⟦g * x⁻¹⟧ :=

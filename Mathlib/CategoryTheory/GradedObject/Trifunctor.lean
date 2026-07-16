@@ -39,6 +39,7 @@ section
 
 variable (F F' : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₄)
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- Auxiliary definition for `mapTrifunctor`. -/
 @[simps]
 def mapTrifunctorObj {I₁ : Type*} (X₁ : GradedObject I₁ C₁) (I₂ I₃ : Type*) :
@@ -49,6 +50,7 @@ def mapTrifunctorObj {I₁ : Type*} (X₁ : GradedObject I₁ C₁) (I₂ I₃ :
   map {X₂ Y₂} φ :=
     { app := fun X₃ x => ((F.obj (X₁ x.1)).map (φ x.2.1)).app (X₃ x.2.2) }
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 /-- Given a trifunctor `F : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₄` and types `I₁`, `I₂`, `I₃`,
 this is the obvious functor
@@ -74,6 +76,7 @@ section
 
 variable {F F' : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₄}
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 /-- The natural transformation `mapTrifunctor F I₁ I₂ I₃ ⟶ mapTrifunctor F' I₁ I₂ I₃`
 induced by a natural transformation `F ⟶ F'` of trifunctors. -/
@@ -92,6 +95,7 @@ def mapTrifunctorMapNatTrans (α : F ⟶ F') (I₁ I₂ I₃ : Type*) :
     dsimp
     simp only [← NatTrans.comp_app, NatTrans.naturality]
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 /-- The natural isomorphism `mapTrifunctor F I₁ I₂ I₃ ≅ mapTrifunctor F' I₁ I₂ I₃`
 induced by a natural isomorphism `F ≅ F'` of trifunctors. -/
@@ -116,6 +120,7 @@ section
 variable (F : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₄)
 variable {I₁ I₂ I₃ J : Type*} (p : I₁ × I₂ × I₃ → J)
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- Given a trifunctor `F : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₃`, graded objects `X₁ : GradedObject I₁ C₁`,
 `X₂ : GradedObject I₂ C₂`, `X₃ : GradedObject I₃ C₃`, and a map `p : I₁ × I₂ × I₃ → J`,
 this is the `J`-graded object sending `j` to the coproduct of
@@ -126,6 +131,7 @@ noncomputable def mapTrifunctorMapObj (X₁ : GradedObject I₁ C₁) (X₂ : Gr
     GradedObject J C₄ :=
   ((((mapTrifunctor F I₁ I₂ I₃).obj X₁).obj X₂).obj X₃).mapObj p
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- The obvious inclusion
 `((F.obj (X₁ i₁)).obj (X₂ i₂)).obj (X₃ i₃) ⟶ mapTrifunctorMapObj F p X₁ X₂ X₃ j` when
 `p ⟨i₁, i₂, i₃⟩ = j`. -/
@@ -135,6 +141,7 @@ noncomputable def ιMapTrifunctorMapObj (X₁ : GradedObject I₁ C₁) (X₂ : 
     ((F.obj (X₁ i₁)).obj (X₂ i₂)).obj (X₃ i₃) ⟶ mapTrifunctorMapObj F p X₁ X₂ X₃ j :=
   ((((mapTrifunctor F I₁ I₂ I₃).obj X₁).obj X₂).obj X₃).ιMapObj p ⟨i₁, i₂, i₃⟩ j h
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- The maps `mapTrifunctorMapObj F p X₁ X₂ X₃ ⟶ mapTrifunctorMapObj F p Y₁ Y₂ Y₃` which
 express the functoriality of `mapTrifunctorMapObj`, see `mapTrifunctorMap` -/
 noncomputable def mapTrifunctorMapMap {X₁ Y₁ : GradedObject I₁ C₁} (f₁ : X₁ ⟶ Y₁)
@@ -182,6 +189,7 @@ instance (X₁ : GradedObject I₁ C₁) (X₂ : GradedObject I₂ C₂) (X₃ :
     [h : HasMap ((((mapTrifunctor F I₁ I₂ I₃).obj X₁).obj X₂).obj X₃) p] :
     HasMap (((mapTrifunctorObj F X₁ I₂ I₃).obj X₂).obj X₃) p := h
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- Given a trifunctor `F : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₄`, a map `p : I₁ × I₂ × I₃ → J`, and
 graded objects `X₁ : GradedObject I₁ C₁`, `X₂ : GradedObject I₂ C₂` and `X₃ : GradedObject I₃ C₃`,
 this is the `J`-graded object sending `j` to the coproduct of
@@ -219,6 +227,7 @@ noncomputable def mapTrifunctorMapFunctorObj (X₁ : GradedObject I₁ C₁)
       NatTrans.id_app, categoryOfGradedObjects_comp, Functor.map_comp, NatTrans.comp_app,
       id_comp, assoc, ι_mapTrifunctorMapMap_assoc]
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 /-- Given a trifunctor `F : C₁ ⥤ C₂ ⥤ C₃ ⥤ C₄` and a map `p : I₁ × I₂ × I₃ → J`,
 this is the functor
@@ -375,6 +384,7 @@ noncomputable def mapBifunctorComp₁₂MapObjIso :
   isoMk _ _ (fun j => (CofanMapObjFun.iso
     (isColimitCofan₃MapBifunctor₁₂BifunctorMapObj F₁₂ G ρ₁₂ X₁ X₂ X₃ j)).symm)
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 @[reassoc (attr := simp)]
 lemma ι_mapBifunctorComp₁₂MapObjIso_hom (i₁ : I₁) (i₂ : I₂) (i₃ : I₃) (j : J)
@@ -555,6 +565,7 @@ noncomputable def mapBifunctorComp₂₃MapObjIso :
   isoMk _ _ (fun j => (CofanMapObjFun.iso
     (isColimitCofan₃MapBifunctorBifunctor₂₃MapObj F G₂₃ ρ₂₃ X₁ X₂ X₃ j)).symm)
 
+set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 @[reassoc (attr := simp)]
 lemma ι_mapBifunctorComp₂₃MapObjIso_hom (i₁ : I₁) (i₂ : I₂) (i₃ : I₃) (j : J)

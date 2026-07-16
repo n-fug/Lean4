@@ -88,6 +88,7 @@ section LSum
 variable (S)
 variable [Module S N] [SMulCommClass R₂ S N]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Lift a family of linear maps `M →ₗ[R] N` indexed by `x : α` to a linear map from `α →₀ M` to
 `N` using `Finsupp.sum`. This is an upgraded version of `Finsupp.liftAddHom`.
 

@@ -322,7 +322,7 @@ theorem BlockTriangular.det_fintype [DecidableEq α] [Fintype α] [LinearOrder �
 
 theorem det_of_upperTriangular [LinearOrder m] (h : M.BlockTriangular id) :
     M.det = ∏ i : m, M i i := by
-  haveI : DecidableEq R := Classical.decEq _
+  have : DecidableEq R := Classical.decEq _
   simp_rw [h.det, image_id, det_toSquareBlock_id]
 
 theorem det_of_lowerTriangular [LinearOrder m] (M : Matrix m m R) (h : M.BlockTriangular toDual) :
@@ -374,7 +374,7 @@ theorem BlockTriangular.inv_toBlock [LinearOrder α] [Invertible M] (hM : BlockT
   inv_eq_left_inv <| hM.toBlock_inverse_mul_toBlock_eq_one k
 
 /-- An upper-left subblock of an invertible block-triangular matrix is invertible. -/
-@[implicit_reducible]
+@[instance_reducible]
 def BlockTriangular.invertibleToBlock [LinearOrder α] [Invertible M] (hM : BlockTriangular M b)
     (k : α) : Invertible (M.toBlock (fun i => b i < k) fun i => b i < k) :=
   invertibleOfLeftInverse _ ((⅟M).toBlock (fun i => b i < k) fun i => b i < k) <| by
@@ -394,7 +394,7 @@ theorem toBlock_inverse_eq_zero [LinearOrder α] [Invertible M] (hM : BlockTrian
     ext i j
     simpa using hM (lt_of_lt_of_le j.2 <| le_of_not_gt i.2)
   have h_mul_eq_zero : M⁻¹.toBlock q p * M.toBlock p p = 0 := by simpa [h_zero] using h_sum
-  haveI : Invertible (M.toBlock p p) := hM.invertibleToBlock k
+  have : Invertible (M.toBlock p p) := hM.invertibleToBlock k
   have : (fun i => k ≤ b i) = q := by
     ext
     exact not_lt.symm
@@ -409,7 +409,7 @@ theorem blockTriangular_inv_of_blockTriangular [LinearOrder α] [Invertible M]
   induction s using Finset.strongInduction generalizing m with | H s ih =>
   subst hs
   intro i j hij
-  haveI : Inhabited m := ⟨i⟩
+  have : Inhabited m := ⟨i⟩
   let k := (univ.image b).max' (univ_nonempty.image _)
   let b' := fun i : { a // b a < k } => b ↑i
   let A := M.toBlock (fun i => b i < k) fun j => b j < k
@@ -417,7 +417,7 @@ theorem blockTriangular_inv_of_blockTriangular [LinearOrder α] [Invertible M]
   · have : M⁻¹.toBlock (fun i => k ≤ b i) (fun i => b i < k) ⟨i, hbi.ge⟩ ⟨j, hbi ▸ hij⟩ = 0 := by
       simp only [toBlock_inverse_eq_zero hM k, Matrix.zero_apply]
     simp [this.symm]
-  haveI : Invertible A := hM.invertibleToBlock _
+  have : Invertible A := hM.invertibleToBlock _
   have hA : A.BlockTriangular b' := hM.submatrix
   have hb' : image b' univ ⊂ image b univ := by
     convert! image_subtype_univ_ssubset_image_univ k b _ (fun a => a < k) (lt_irrefl _)

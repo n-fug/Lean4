@@ -275,8 +275,8 @@ theorem map_surjective [Nonempty γ] [Nonempty δ] {f : α → γ} {g : β → �
 @[simp]
 theorem map_bijective [Nonempty α] [Nonempty β] {f : α → γ} {g : β → δ} :
     Bijective (map f g) ↔ Bijective f ∧ Bijective g := by
-  haveI := Nonempty.map f ‹_›
-  haveI := Nonempty.map g ‹_›
+  have := Nonempty.map f ‹_›
+  have := Nonempty.map g ‹_›
   exact (map_injective.and map_surjective).trans and_and_and_comm
 
 @[simp]
