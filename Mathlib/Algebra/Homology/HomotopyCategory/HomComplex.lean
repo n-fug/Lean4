@@ -65,12 +65,11 @@ variable (F G)
 of a family of morphisms `F.X p ⟶ G.X q` whenever `p + n = q`, i.e. for all
 triplets in `HomComplex.Triplet n`. -/
 def Cochain := ∀ (T : Triplet n), F.X T.p ⟶ G.X T.q
-deriving AddCommGroup
-
-instance : Module R (Cochain F G n) :=
-  inferInstanceAs <| Module R (∀ _, _)
 
 namespace Cochain
+
+-- The `SMul` instance exists to avoid a zsmul diamond.
+deriving instance SMul R, AddCommGroup, Module R for Cochain F G n
 
 variable {F G n}
 
@@ -578,10 +577,6 @@ def cocycle : AddSubgroup (Cochain F G n) :=
 /-- The type of `n`-cocycles, as a subtype of `Cochain F G n`. -/
 def Cocycle : Type v := cocycle F G n
 
-instance : AddCommGroup (Cocycle F G n) := by
-  dsimp only [Cocycle]
-  infer_instance
-
 namespace Cocycle
 
 variable {F G}
@@ -605,6 +600,9 @@ instance : SMul R (Cocycle F G n) where
     simp only [δ_smul, hz, smul_zero]⟩
 
 variable (F G n)
+
+instance : AddCommGroup (Cocycle F G n) :=
+  inferInstanceAs <| AddCommGroup (cocycle F G n)
 
 @[simp]
 lemma coe_zero : (↑(0 : Cocycle F G n) : Cochain F G n) = 0 := by rfl

@@ -74,7 +74,6 @@ structure AddMagmaCat.Hom (A B : AddMagmaCat.{u}) where
   /-- The underlying `AddHom`. -/
   hom' : A →ₙ+ B
 
-set_option backward.privateInPublic true in
 /-- The type of morphisms in `MagmaCat R`. -/
 @[to_additive, ext]
 structure MagmaCat.Hom (A B : MagmaCat.{u}) where
@@ -236,7 +235,6 @@ structure AddSemigrp.Hom (A B : AddSemigrp.{u}) where
   /-- The underlying `AddHom`. -/
   hom' : A →ₙ+ B
 
-set_option backward.privateInPublic true in
 /-- The type of morphisms in `Semigrp R`. -/
 @[to_additive, ext]
 structure Semigrp.Hom (A B : Semigrp.{u}) where

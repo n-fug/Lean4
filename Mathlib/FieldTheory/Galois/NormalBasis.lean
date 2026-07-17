@@ -10,6 +10,7 @@ public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.FieldTheory.Finite.Basic
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.LinearAlgebra.AnnihilatingPolynomial
+public import Mathlib.LinearAlgebra.Dual.Lemmas
 
 /-!
 # The normal basis theorem

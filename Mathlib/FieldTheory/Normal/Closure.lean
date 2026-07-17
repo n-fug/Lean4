@@ -6,6 +6,7 @@ Authors: Thomas Browning
 module
 
 public import Mathlib.FieldTheory.Normal.Basic
+
 /-!
 # Normal closures
 

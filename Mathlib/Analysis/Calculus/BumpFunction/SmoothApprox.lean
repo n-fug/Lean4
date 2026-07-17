@@ -12,7 +12,7 @@ public import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 
 In this file we prove that smooth functions are dense in the set of continuous functions
 from a real finite-dimensional vector space to a Banach space,
-see `ContinuousMap.dense_setOf_contDiff`.
+see `ContinuousMap.dense_setOfPred_contDiff`.
 We also prove several unbundled versions of this statement.
 
 The heavy part of the proof is done upstream in `ContDiffBump.dist_normed_convolution_le`
@@ -51,11 +51,11 @@ theorem UniformContinuous.exists_contDiff_dist_le (hf : UniformContinuous f) (h�
   exact ⟨g, hgc, fun a ↦ (hg a _ fun _ h ↦ (hfδ h).le).trans_lt (half_lt_self hε)⟩
 
 /-- Infinitely smooth functions are dense in the space of continuous functions. -/
-theorem ContinuousMap.dense_setOf_contDiff : Dense {f : C(E, F) | ContDiff ℝ ∞ f} := by
+theorem ContinuousMap.dense_setOfPred_contDiff : Dense {f : C(E, F) | ContDiff ℝ ∞ f} := by
   intro f
   rw [mem_closure_iff_nhds_basis
     (nhds_basis_uniformity uniformity_basis_dist.compactConvergenceUniformity)]
-  simp only [Prod.forall, mem_setOf_eq, and_imp]
+  simp only [Prod.forall, mem_ofPred_eq, and_imp]
   intro K ε hK hε
   have : UniformContinuousOn f (cthickening 1 K) :=
     hK.cthickening.uniformContinuousOn_of_continuous <| by fun_prop
@@ -66,3 +66,6 @@ theorem ContinuousMap.dense_setOf_contDiff : Dense {f : C(E, F) | ContDiff ℝ �
   rw [mem_ball, lt_min_iff] at hy
   exact hfδ _ (mem_cthickening_of_dist_le _ x _ _ hx hy.1.le) _
     (self_subset_cthickening _ hx) hy.2 |>.le
+
+@[deprecated (since := "2026-07-09")]
+alias ContinuousMap.dense_setOf_contDiff := ContinuousMap.dense_setOfPred_contDiff

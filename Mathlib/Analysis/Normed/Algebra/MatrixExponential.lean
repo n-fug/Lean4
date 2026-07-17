@@ -99,7 +99,7 @@ theorem IsHermitian.exp [StarRing 𝔸] [ContinuousStar 𝔸] {A : Matrix m m �
 theorem BlockTriangular.exp [LinearOrder α] [Algebra ℚ 𝔸] {M : Matrix m m 𝔸} {b : m → α}
     (hM : BlockTriangular M b) :
     (exp M).BlockTriangular b :=
-  exp_mem (s := blockTriangularSubalgebra ℚ _ b) isClosed_setOf_blockTriangular hM
+  exp_mem (s := blockTriangularSubalgebra ℚ _ b) isClosed_setOfPred_blockTriangular hM
 
 end Ring
 

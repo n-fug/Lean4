@@ -639,13 +639,26 @@ def ofInvolutive (f : α → α) (hf : Involutive f) (hf' : Measurable f) : α �
     (ofInvolutive f hf hf').symm = ofInvolutive f hf hf' := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- `setOf` as a `MeasurableEquiv`. -/
+/-- `Set.ofPred` as a `MeasurableEquiv`. -/
 @[simps]
-protected def setOf {α : Type*} : (α → Prop) ≃ᵐ Set α where
+protected def setOfPred {α : Type*} : (α → Prop) ≃ᵐ Set α where
   toFun p := {a | p a}
   invFun s a := a ∈ s
 
-@[simp, norm_cast] lemma coe_setOf {α : Type*} : ⇑MeasurableEquiv.setOf = setOf (α := α) := rfl
+@[deprecated (since := "2026-07-09")]
+protected alias setOf := MeasurableEquiv.setOfPred
+
+@[deprecated (since := "2026-07-09")]
+alias setOf_apply := MeasurableEquiv.setOfPred_apply
+
+@[deprecated (since := "2026-07-09")]
+alias setOf_symm_apply := MeasurableEquiv.setOfPred_symm_apply
+
+@[simp, norm_cast] lemma coe_setOfPred {α : Type*} :
+    ⇑MeasurableEquiv.setOfPred = Set.ofPred (α := α) := rfl
+
+@[deprecated (since := "2026-07-09")]
+alias coe_setOf := coe_setOfPred
 
 end MeasurableEquiv
 
