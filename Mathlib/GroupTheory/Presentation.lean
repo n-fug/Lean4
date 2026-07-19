@@ -39,7 +39,7 @@ generators and relations.
 
 ## References
 
-* [D. F. Holt, S. Rees, C. E. Röver, *Groups, Languages and Automata*][HoltReesRover2017], §1.2.3.
+* [D. F. Holt, S. Rees, C. E. Röver, *Groups, Languages and Automata*][HoltReesRover2017], §1
 
 ## Tags
 
@@ -155,6 +155,8 @@ theorem rel_mem_relSet (r : ρ) : P.rel r ∈ P.relSet := ⟨r, rfl⟩
 /-- The relator set of a presentation with finitely many relators is finite. -/
 theorem relSet_finite [Finite ρ] : P.relSet.Finite := Set.finite_range P.rel
 
+/-- Instance form of `relSet_finite`: typeclass search cannot unfold `relSet` to `Set.range rel`,
+so the `Finite ↥(Set.range _)` instance does not apply to `↥relSet` on its own. -/
 instance [Finite ρ] : Finite P.relSet := P.relSet_finite.to_subtype
 
 /-- The kernel of `lift` is the normal closure of the relator set `relSet`: the presentation's
