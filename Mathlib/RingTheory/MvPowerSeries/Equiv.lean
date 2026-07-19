@@ -25,6 +25,8 @@ This file establishes a number of equivalences related to power series rings.
 
 @[expose] public section
 
+universe u v w
+
 noncomputable section
 
 namespace MvPowerSeries
