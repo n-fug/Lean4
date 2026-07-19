@@ -155,6 +155,8 @@ theorem rel_mem_relSet (r : ρ) : P.rel r ∈ P.relSet := ⟨r, rfl⟩
 /-- The relator set of a presentation with finitely many relators is finite. -/
 theorem relSet_finite [Finite ρ] : P.relSet.Finite := Set.finite_range P.rel
 
+instance [Finite ρ] : Finite P.relSet := P.relSet_finite.to_subtype
+
 /-- The kernel of `lift` is the normal closure of the relator set `relSet`: the presentation's
 defining condition `ker_eq_normalClosure`, restated in terms of `lift` and `relSet`. -/
 theorem ker_lift : P.lift.ker = Subgroup.normalClosure P.relSet := P.ker_eq_normalClosure
@@ -181,9 +183,7 @@ theorem presentedGroupEquiv_of (a : α) :
 relators (`[Finite ρ]`) — witnesses that `G` is finitely presented (`Group.IsFinitelyPresented`).
 This is the presentation-level analogue of `Group.Generators.fg`. -/
 theorem isFinitelyPresented [Finite α] [Finite ρ] (P : Group.Presentation G α ρ) :
-    Group.IsFinitelyPresented G :=
-  have : Finite P.relSet := P.relSet_finite.to_subtype
-  IsFinitelyPresented.equiv P.presentedGroupEquiv
+    Group.IsFinitelyPresented G := IsFinitelyPresented.equiv P.presentedGroupEquiv
 
 end Group.Presentation
 
