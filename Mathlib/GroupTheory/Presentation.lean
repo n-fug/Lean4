@@ -10,10 +10,11 @@ public import Mathlib.GroupTheory.FinitelyPresentedGroup
 /-!
 # Group presentations as data
 
-`PresentedGroup rels` constructs the group presented by a set of relators `rels`. This file provides
-the complementary bundled notion: a `Group.Presentation` packages a chosen presentation of a
-given group `G`: a generating family together with relators (words `r`, each read as `r = 1`) whose
+`Group.Presentation` packages a chosen presentation of a given group `G`:
+a generating family together with relators (words `r`, each read as `r = 1`) whose
 generated normal subgroup is exactly the kernel of `FreeGroup.lift val : FreeGroup α →* G`.
+This the complementary to `PresentedGroup rels`, which constructs the group presented by a set of
+generators and relations.
 
 ## Main definitions
 
