@@ -1378,10 +1378,6 @@ def toUnits_homeomorph [Group G] [TopologicalSpace G] [ContinuousInv G] : G ≃�
   toEquiv := toUnits.toEquiv
   continuous_toFun := Units.continuous_iff.2 ⟨continuous_id, continuous_inv⟩
 
-@[to_additive] theorem Units.isEmbedding_val [Group G] [TopologicalSpace G] [ContinuousInv G] :
-    IsEmbedding (val : Gˣ → G) :=
-  toUnits_homeomorph.symm.isEmbedding
-
 lemma Continuous.of_coeHom_comp [Group G] [Monoid H] [TopologicalSpace G] [TopologicalSpace H]
     [ContinuousInv G] {f : G →* Hˣ} (hf : Continuous ((Units.coeHom H).comp f)) : Continuous f := by
   apply continuous_induced_rng.mpr ?_
