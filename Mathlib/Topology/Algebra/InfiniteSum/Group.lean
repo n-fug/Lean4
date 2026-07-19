@@ -6,6 +6,7 @@ Authors: Johannes Hölzl
 module
 
 public import Mathlib.SetTheory.Cardinal.Finite
+public import Mathlib.Topology.Algebra.GroupWithZero
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import Mathlib.Topology.UniformSpace.Cauchy
 public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
@@ -415,8 +416,10 @@ theorem tprod_const [T2Space G] (a : G) : ∏' _ : β, a = a ^ (Nat.card β) := 
 end IsTopologicalGroup
 
 section CommGroupWithZero
+
 variable {K : Type*} [CommGroupWithZero K] [TopologicalSpace K] [SeparatelyContinuousMul K]
-  {f g : α → K}
+  {f g : α → K} {L : SummationFilter α}
+
 /-!
 ## Groups with a zero
 
@@ -458,5 +461,18 @@ lemma Multipliable.congr_cofinite₀ (hf : Multipliable f) (hf' : ∀ a, f a ≠
   obtain ⟨c, hc⟩ := hf
   obtain ⟨s, hs⟩ : ∃ s : Finset α, ∀ i ∉ s, f i = g i := ⟨hfg.toFinset, by simp⟩
   exact (hc.congr_cofinite₀ (fun a _ ↦ hf' a) hs).multipliable
+
+omit [SeparatelyContinuousMul K] in
+theorem HasProd.inv₀ {a : K} [ContinuousInv₀ K] (h : HasProd f a L) (ha : a ≠ 0) :
+    HasProd (fun x ↦ (f x)⁻¹) a⁻¹ L := by
+  simp_rw [HasProd, Finset.prod_inv_distrib]
+  exact Tendsto.inv₀ h ha
+
+omit [SeparatelyContinuousMul K] in
+theorem HasProd.div₀ [ContinuousInv₀ K] [ContinuousMul K] {a b : K}
+    (hf : HasProd f a L) (hg : HasProd g b L) (hb : b ≠ 0) :
+    HasProd (fun x ↦ f x / g x) (a / b) L := by
+  simp only [div_eq_mul_inv]
+  exact hf.mul <| hg.inv₀ hb
 
 end CommGroupWithZero
