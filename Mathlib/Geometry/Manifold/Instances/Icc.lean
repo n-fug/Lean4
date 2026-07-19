@@ -9,6 +9,7 @@ public import Mathlib.Analysis.InnerProductSpace.Calculus
 public import Mathlib.Geometry.Manifold.ContMDiff.Basic
 public import Mathlib.Geometry.Manifold.Instances.Real
 import Mathlib.Geometry.Manifold.Notation
+public import Mathlib.Geometry.Manifold.SmoothEmbedding
 public import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
 
 /-! # Manifold structure on real intervals
@@ -21,13 +22,15 @@ the interval in `ℝ` (see `contMDiffOn_comp_projIcc_iff` and friends).
 
 We also define `1 : TangentSpace (𝓡∂ 1) z`, and relate it to `1` in the real line.
 
+- `isSmoothEmbedding_subtype_coe_Icc`: the inclusion `Icc x y → ℝ` is a smooth embedding,
+  and in particular smooth (`contMDiff_subtype_coe_Icc`)
+- `contMDiff_iff_comp_subtype_coe_Icc`: a function `f : M → Icc x y` is smooth iff
+  its composition with the inclusion into `ℝ` is smooth
+
 ## TODO
 
-This file can be thoroughly rewritten once mathlib has a good theory of smooth immersions and
-embeddings. Once this is done,
-- the inclusion `Icc x y → ℝ` is a smooth embedding, and in particular smooth
-- deduce the dual result: a function `f : M → Icc x y` is smooth iff
-  its composition with the inclusion into `ℝ` is smooth
+This file can be thoroughly rewritten once mathlib has a good theory of smooth submersions.
+Once this is done,
 - prove the projection `ℝ → Icc x y` is a smooth submersion, hence smooth
 - use this to simplify the proof that `f : Icc x y → M` is smooth iff the composition `ℝ → M`
   with the projection `ℝ → Icc x y` is
@@ -64,48 +67,74 @@ instance {x y : ℝ} [h : Fact (x < y)] (z : Icc x y) : One (TangentSpace (𝓡�
 
 variable {x y : ℝ} [h : Fact (x < y)] {n : WithTop ℕ∞}
 
-set_option backward.isDefEq.respectTransparency false in
-/-- The inclusion map from of a closed segment to `ℝ` is smooth in the manifold sense. -/
-lemma contMDiff_subtype_coe_Icc : CMDiff n (fun (z : Icc x y) ↦ (z : ℝ)) := by
+open Manifold IsManifold
+
+-- TODO: all these lemmas are technically misnamed; the relevant coercion is Subtype.val!
+
+set_option linter.flexible false in
+/-- The inclusion map from a closed segment to `ℝ` is a smooth immersion -/
+lemma isImmersionOfComplement_subtype_coe_Icc :
+    IsImmersionOfComplement (EuclideanSpace ℝ (Fin 0)) (𝓡∂ 1) 𝓘(ℝ) n
+      (fun (z : Icc x y) ↦ (z : ℝ)) := by
   intro z
-  rw [contMDiffAt_iff]
-  refine ⟨by fun_prop, ?_⟩
-  -- We come back to the definition: we should check that, in each chart, the map is smooth.
-  -- There are two charts, and we check things separately in each of them using the
-  -- explicit formulas.
-  suffices ContDiffWithinAt ℝ n _ (range ↑(𝓡∂ 1)) _ by simpa
-  split_ifs with hz
-  · simp? [IccLeftChart, Function.comp_def, modelWithCornersEuclideanHalfSpace] says
-      simp only [IccLeftChart, Fin.isValue, OpenPartialHomeomorph.coe_mk_symm,
-        PartialEquiv.coe_symm_mk, modelWithCornersEuclideanHalfSpace, ModelWithCorners.mk_symm,
-        Function.comp_def, Function.update_self, ModelWithCorners.mk_coe,
-        OpenPartialHomeomorph.coe_mk]
-    rw [Subtype.range_val_subtype]
-    have : ContDiff ℝ n (fun (z : EuclideanSpace ℝ (Fin 1)) ↦ z 0 + x) := by fun_prop
-    apply this.contDiffWithinAt.congr_of_eventuallyEq_of_mem; swap
-    · simpa using z.2.1
-    have : {w : EuclideanSpace ℝ (Fin 1) | w 0 < y - x} ∈ 𝓝 (toLp 2 fun i ↦ z - x) := by
-      apply (isOpen_lt (PiLp.continuous_apply 2 _ 0) continuous_const).mem_nhds
-      simpa using hz
-    filter_upwards [self_mem_nhdsWithin, nhdsWithin_le_nhds this] with w hw h'w
-    rw [max_eq_left hw, min_eq_left]
-    linarith
-  · simp only [not_lt] at hz
-    simp? [IccRightChart, Function.comp_def, modelWithCornersEuclideanHalfSpace] says
-      simp only [IccRightChart, Fin.isValue, OpenPartialHomeomorph.coe_mk_symm,
-        PartialEquiv.coe_symm_mk, modelWithCornersEuclideanHalfSpace, ModelWithCorners.mk_symm,
-        Function.comp_def, Function.update_self, ModelWithCorners.mk_coe,
-        OpenPartialHomeomorph.coe_mk]
-    rw [Subtype.range_val_subtype]
-    have : ContDiff ℝ n (fun (z : EuclideanSpace ℝ (Fin 1)) ↦ y - z 0) := by fun_prop
-    apply this.contDiffWithinAt.congr_of_eventuallyEq_of_mem; swap
-    · simpa using z.2.2
-    have : {w : EuclideanSpace ℝ (Fin 1) | w 0 < y - x} ∈ 𝓝 (toLp 2 fun i ↦ y - z) := by
-      apply (isOpen_lt (PiLp.continuous_apply 2 _ 0) continuous_const).mem_nhds
-      simpa using h.out.trans_le hz
-    filter_upwards [self_mem_nhdsWithin, nhdsWithin_le_nhds this] with w hw h'w
-    rw [max_eq_left hw, max_eq_left]
-    linarith
+  letI φ₀ := ContinuousLinearEquiv.prodUnique ℝ
+    (EuclideanSpace ℝ (Fin 1)) (EuclideanSpace ℝ (Fin 0))
+  let φ : (EuclideanSpace ℝ (Fin 1) × EuclideanSpace ℝ (Fin 0)) ≃L[ℝ] ℝ :=
+    φ₀.trans (PiLp.equivOfUnique 2 ℝ (fun (_ : Fin 1) ↦ ℝ))
+  by_cases hz : ↑z < y
+  · -- At all points but `y`, the correct codomain chart maps `a` to `a + x`.
+    apply IsImmersionAtOfComplement.mk_of_continuousAt (by fun_prop) φ
+      (chartAt (EuclideanHalfSpace 1) z) (Homeomorph.addLeft (-x)).toOpenPartialHomeomorph
+      (mem_chart_source _ z) (by simp [Homeomorph.addLeft]) (chart_mem_maximalAtlas _) ?_; swap
+    · apply OpenPartialHomeomorph.mem_maximalAtlas_of_contMDiffOn
+      · suffices ContDiffOn ℝ n (fun y ↦ -x + y) univ by simpa [contMDiffOn_iff_contDiffOn]
+        fun_prop
+      · suffices ContDiffOn ℝ n (fun y ↦ x + y) univ by
+          simpa [contMDiffOn_iff_contDiffOn, Homeomorph.addLeft]
+        fun_prop
+    intro z' hz'
+    have : 0 ≤ z' 0 := by simp_all [IccLeftChart, modelWithCornersEuclideanHalfSpace]
+    simp [hz, IccLeftChart, modelWithCornersEuclideanHalfSpace]
+    rw [min_eq_left, max_eq_left this]
+    · simp [φ, φ₀, add_comm]
+    · simp_all [IccLeftChart, modelWithCornersEuclideanHalfSpace]
+      linarith
+  · -- At the right boundary point, the correct codomain chart is mapping `a` to `y - a`.
+    apply IsImmersionAtOfComplement.mk_of_continuousAt (by fun_prop) φ
+      (chartAt (EuclideanHalfSpace 1) z)
+      (Homeomorph.pointReflection (y / 2)).toOpenPartialHomeomorph (mem_chart_source _ z)
+      (by simp [Homeomorph.pointReflection]) (chart_mem_maximalAtlas _) ?_; swap
+    · apply OpenPartialHomeomorph.mem_maximalAtlas_of_contMDiffOn
+      all_goals
+        simp [contMDiffOn_iff_contDiffOn,
+          Homeomorph.pointReflection, Homeomorph.vaddConst, Homeomorph.constVSub]
+        fun_prop
+    intro z' hz'
+    have : 0 ≤ z' 0 := by simp_all [IccLeftChart, modelWithCornersEuclideanHalfSpace]
+    simp [hz, IccRightChart, modelWithCornersEuclideanHalfSpace]
+    rw [max_eq_left, max_eq_left this]
+    · simp [φ, φ₀, Equiv.pointReflection]
+      ring_nf
+    · simp [hz, IccRightChart] at hz'
+      replace hz' := hz'.2
+      simp [modelWithCornersEuclideanHalfSpace] at hz'
+      rw [max_eq_left this]
+      linarith
+
+/-- The inclusion map from a closed segment to `ℝ` is a smooth embedding -/
+lemma isSmoothEmbedding_subtype_coe_Icc :
+    IsSmoothEmbedding (𝓡∂ 1) 𝓘(ℝ) n (fun (z : Icc x y) ↦ (z : ℝ)) :=
+  ⟨isImmersionOfComplement_subtype_coe_Icc.isImmersion, Topology.IsEmbedding.subtypeVal⟩
+
+/-- The inclusion map from of a closed segment to `ℝ` is smooth in the manifold sense. -/
+lemma contMDiff_subtype_coe_Icc : CMDiff n (fun (z : Icc x y) ↦ (z : ℝ)) :=
+  isImmersionOfComplement_subtype_coe_Icc.contMDiff.of_le (OrderTop.le_top n)
+
+/-- A function `f : M → Icc x y` is smooth iff its composition with the inclusion
+into `ℝ` is smooth. -/
+lemma contMDiff_iff_comp_subtype_coe_Icc {f : M → Icc x y} :
+    CMDiff n f ↔ Continuous f ∧ CMDiff n ((fun (z : Icc x y) ↦ (z : ℝ)) ∘ f) := by
+  rw [← ContMDiff.iff_comp_isImmersionOfComplement isImmersionOfComplement_subtype_coe_Icc]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The projection from `ℝ` to a closed segment is smooth on the segment, in the manifold sense. -/
