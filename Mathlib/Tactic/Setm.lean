@@ -1,0 +1,130 @@
+/-
+Copyright (c) 2026 Lua Viana Reis. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lua Viana Reis
+-/
+module
+
+public meta import Mathlib.Tactic.Core
+public meta import Lean.Elab.Tactic.Rewrite
+
+/-!
+# The `setm` tactic
+
+This module defines the `setm` tactic.
+
+The `setm` tactic matches a pattern containing named holes to the type of a target, and creates
+local declarations for the hole names whose values are the assigned expressions. By default, the
+target is the goal, but it can be selected to be a local declaration via the `using` syntax.
+Optionally, with the syntax `at loc`, it also rewrites at locations `loc` to replace the occurrences
+of the matched expressions with the newly-introduced local declarations.
+
+
+## Todo
+
+It would be nice if the tactic was be made to work for non-constants under binders (by adding forall
+binders to the local declarations).
+
+-/
+
+meta section
+
+open Lean Mathlib Elab Tactic Meta Term Syntax
+
+structure SetMReplaceState where
+  goal : MVarId
+  /-- Created names and their fvars, in the order they appear in the pattern. -/
+  holes : NameMap FVarId := {}
+  /-- New metavariables for the values of new free variables. -/
+  newMVars : Array MVarId := #[]
+
+abbrev SetMReplaceM := StateT SetMReplaceState TermElabM
+
+/-- Traverse all synthetic holes, creating local declarations for them. -/
+def replaceWithLDecls (stx : Syntax) : SetMReplaceM Syntax :=
+  stx.replaceM fun stx ↦ do
+    let fvar ←
+      if let `(?$n:ident) := stx then
+        let name := n.getId
+        (← get).holes.get? name |>.getDM do
+          createLDecl stx name
+      else if let `(?_) := stx then
+        let name ← mkFreshUserName `x
+        createLDecl stx name
+      else
+        -- Not a synthetic hole.
+        return none
+    return ← withRef stx <| (← get).goal.withContext <| Term.exprToSyntax (.fvar fvar)
+  where
+    createLDecl stx name : SetMReplaceM FVarId := do
+      let mvar ← mkFreshExprMVar none
+      registerMVarErrorCustomInfo mvar.mvarId! stx m!"`{stx}` could not be assigned"
+      let goal ← (← get).goal.define name (← mvar.mvarId!.getType) mvar
+      let (fvar, goal) ← goal.intro1P
+      modify fun s ↦ {
+        goal
+        holes := s.holes.insert name fvar
+        newMVars := s.newMVars.push mvar.mvarId! }
+      return fvar
+
+-- TODO: show example! Also check style guide for tactic docstrings
+/--
+* `setm expr`, where `expr` is a term containing named holes (like `?a`) will match `expr` to the
+  current goal and create local declarations assigning the hole names to their inferred value.
+  Moreover, it will replace the matches with their new names.
+* `setm expr using h` is like `setm expr`, except that `expr` is matched with the local hypothesis
+  `h` instead.
+* `setm expr (using h)? at loc` is like the above, except that it also rewrites the newly-introduced
+  local declarations at the locations `loc`.
+-/
+syntax (name := setM) "setm " term (" using " ident)? (Parser.Tactic.location)? : tactic
+
+def defeqOrError (goal : MVarId) (p e : Expr) : MetaM Unit :=
+  unless ← withReducible <| isDefEq p e do
+    throwTacticEx `setm goal <| MessageData.ofLazyM (es := #[p, e]) do
+      let (p, tgt) ← addPPExplicitToExposeDiff p e
+      return m!"Pattern{indentExpr p}\nis not definitionally equal \
+        to the target{indentExpr tgt}"
+
+-- TODO: move to Mathlib.Lean
+def commitIfNoExPreservingInfoAndMessages {α} (x : TacticM α) : TacticM α := do
+  let saved ← saveState
+  Tactic.tryCatch (withSaveInfoContext x) fun ex => do
+    let saved := { saved with
+      term.meta.core.infoState := (← getInfoState)
+      term.meta.core.messages := (← getThe Core.State).messages }
+    restoreState saved
+    throw ex
+
+elab_rules : tactic
+| `(tactic| setm $pat:term $[using $usingArg]? $[$loc:location]?) =>
+  withMainContext do commitIfNoExPreservingInfoAndMessages do
+    let origGoal ← getMainGoal
+    let (pat, { goal, holes, newMVars }) ← (replaceWithLDecls pat).run { goal := origGoal }
+    -- TODO: comment? Bigger question: just reducible?
+    goal.withContext do
+      let (pat, newPatMVars) ← collectFreshMVars <| Tactic.elabTerm pat none (mayPostpone := true)
+      if let some place := usingArg.map getId then
+        let loc := (← getLocalDeclFromUserName place).fvarId
+        defeqOrError origGoal pat (← loc.getType)
+        replaceMainGoal [← goal.changeLocalDecl loc pat (checkDefEq := false)]
+      else
+        defeqOrError origGoal pat (← goal.getType)
+        replaceMainGoal [← goal.replaceTargetDefEq pat]
+      if let some loc := loc then
+        -- TODO: more robust implementation with `kabstract` and `withReverted`
+        -- Write as reusable API
+        for (name, fvar) in holes do
+          let some expr ← fvar.getValue? | continue
+          let eq ← `(show $(← Term.exprToSyntax expr) = $(mkIdent name) from rfl)
+          withLocation (expandLocation loc)
+            -- Want to ignore rewrites that failed due to no occurrences,
+            -- but this also ignores motive-is-not-type-correct errors that we could avoid
+            -- with a different implementation.
+            (discard <| tryTactic <| rewriteLocalDecl eq (symm := false) ·)
+            (discard <| tryTactic <| rewriteTarget eq (symm := false))
+            (fun goal ↦ throwTacticEx `setm goal "Rewriting failed")
+      let unassignedMVars ← (newMVars ++ newPatMVars).filterM (notM ·.isAssigned)
+      unless unassignedMVars.isEmpty do
+        discard <| logUnassignedUsingErrorInfos unassignedMVars
+        throwAbortTactic
