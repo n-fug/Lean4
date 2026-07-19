@@ -77,15 +77,15 @@ structure MonomialOrder (σ : Type*) where
 attribute [instance] MonomialOrder.addCommMonoidSyn MonomialOrder.linearOrderSyn
   MonomialOrder.isOrderedAddMonoid_syn MonomialOrder.wellFoundedLT_syn
 
+namespace MonomialOrder
+
+variable {σ : Type*} (m : MonomialOrder σ)
+
 @[deprecated (since := "2026-07-07")] alias acm := MonomialOrder.addCommMonoidSyn
 
 @[deprecated (since := "2026-07-07")] alias lo := MonomialOrder.linearOrderSyn
 
 @[deprecated (since := "2026-07-07")] alias wf := MonomialOrder.wellFoundedLT_syn
-
-namespace MonomialOrder
-
-variable {σ : Type*} (m : MonomialOrder σ)
 
 instance : AddCancelCommMonoid m.syn where
   add_left_cancel := m.toSyn.symm.injective.isLeftCancelAdd _ (map_add _) |>.add_left_cancel
