@@ -71,6 +71,20 @@ instance (Γ' : Subgroup (GL n R)) [HasDetOne Γ] : HasDetOne (Γ ⊓ Γ') where
 instance (Γ' : Subgroup (GL n R)) [HasDetOne Γ] : HasDetOne (Γ' ⊓ Γ) where
   det_eq hg := HasDetOne.det_eq hg.2
 
+open scoped Pointwise in
+instance (Γ : Subgroup (GL n R)) [HasDetOne Γ] (g : ConjAct <| GL n R) :
+    HasDetOne (g • Γ) where
+  det_eq {h} hh := by
+    rw [mem_pointwise_smul_iff_inv_smul_mem] at hh
+    simpa [ConjAct.smul_def] using HasDetOne.det_eq hh
+
+open scoped Pointwise in
+instance (Γ : Subgroup (GL n R)) [HasDetPlusMinusOne Γ] (g : ConjAct <| GL n R) :
+    HasDetPlusMinusOne (g • Γ) where
+  det_eq {h} hh := by
+    rw [mem_pointwise_smul_iff_inv_smul_mem] at hh
+    simpa [ConjAct.smul_def] using HasDetPlusMinusOne.det_eq hh
+
 end det_typeclasses
 
 section SL2Z_in_GL2R
@@ -247,3 +261,13 @@ instance Subgroup.instIsArithmeticAdjoinNegOne {𝒢 : Subgroup (GL (Fin 2) ℝ)
   ⟨(𝒢.commensurable_adjoinNegOne_self).trans IsArithmetic.is_commensurable⟩
 
 end adjoinNeg
+
+open scoped Pointwise in
+instance instDiscreteSubgroup_conj {G : Type*} [Group G] [TopologicalSpace G]
+    [SeparatelyContinuousMul G] {𝒢 : Subgroup G} (g : ConjAct G) [DiscreteTopology 𝒢] :
+    DiscreteTopology ↑(g • 𝒢) := by
+  simp only [← SetLike.coe_sort_coe, ← isDiscrete_iff_discreteTopology] at *
+  apply IsDiscrete.image_of_isOpenMap ‹_› ?_ fun x y ↦ by simp
+  apply IsOpenMap.of_inverse (f' := fun x ↦ g⁻¹ • x) (IsTopologicalGroup.continuous_conj _) <;>
+  · intro x
+    simp
