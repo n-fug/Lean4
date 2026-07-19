@@ -1,0 +1,121 @@
+# Cross-reference tag review (workflow_run)
+#
+# Privileged companion to the `dump cross-reference tags to TSV` step in
+# `build_template.yml`. Downloads the bridge artifact emitted by the build,
+# hands off to mathlib-ci's orchestrator, which in turn invokes the
+# pinned `leanprover-community/external-tags` tool to fetch snippets and
+# produce the PR comment body, then posts/updates the comment.
+#
+# The privileged job runs with `pull-requests: write`, but it executes only
+# code from mathlib-ci (which executes only code from external-tags at a
+# pinned SHA). Nothing from the build artifact is interpreted as code; the
+# TSV is parsed as untrusted data.
+name: cross-reference review (workflow_run)
+
+on:
+  workflow_run:
+    workflows:
+      - continuous integration
+      - continuous integration (mathlib forks)
+    types:
+      - completed
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: Post cross-reference review comment
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'leanprover-community/mathlib4' && github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Consume bridge artifact
+        id: bridge
+        uses: leanprover-community/privilege-escalation-bridge/consume@f5dfe313a79647c07315b451b2dc2a81a161a50d # v1.2.0
+        with:
+          token: ${{ github.token }}
+          artifact: crossref-tags-bridge
+          # Pushes (non-PR builds) intentionally skip the emit step, so a
+          # missing artifact is the common case for non-PR runs.
+          fail_on_missing: false
+          extract: |
+            pr_number=outputs.pr_number
+            head_sha=outputs.head_sha
+
+      # Use the local composite action so the pinned mathlib-ci ref is the
+      # single source of truth (matches olean_report.yaml, etc.). The
+      # validate-ci-scripts-paths lint requires this.
+      - name: Checkout local actions
+        if: steps.bridge.outputs.pr_number != ''
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.workflow_sha }}
+          fetch-depth: 1
+          sparse-checkout: .github/actions
+          path: workflow-actions
+
+      - name: Get mathlib-ci
+        if: steps.bridge.outputs.pr_number != ''
+        uses: ./workflow-actions/.github/actions/get-mathlib-ci
+
+      # mathlib-ci's post-comment.sh hardcodes the pinned external-tags
+      # SHA. We grep it out so the cache key tracks the same source of
+      # truth. Bumping the pin is a one-line PR to mathlib-ci.
+      - name: Resolve pinned external-tags SHA
+        if: steps.bridge.outputs.pr_number != ''
+        id: pin
+        run: |
+          sha=$(grep -E '^EXTERNAL_TAGS_SHA=' "${CI_SCRIPTS_DIR}/crossref_review/post-comment.sh" | head -1 | cut -d'"' -f2)
+          if [[ ! "$sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Could not parse EXTERNAL_TAGS_SHA from post-comment.sh; got: '$sha'" >&2
+            exit 1
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "external-tags pinned at $sha"
+
+      # Restore (and on miss, eventually populate) a single cache that
+      # covers both the Lean toolchain (~/.elan) and the built
+      # external-tags lake project. The key changes whenever the pinned
+      # external-tags ref changes; a stale toolchain across pin bumps
+      # costs us one rebuild and that's acceptable.
+      - name: Restore external-tags build cache
+        if: steps.bridge.outputs.pr_number != ''
+        id: cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.elan
+            external-tags
+          key: crossref-render-${{ steps.pin.outputs.sha }}-${{ runner.os }}
+
+      - name: Install elan
+        if: steps.bridge.outputs.pr_number != '' && steps.cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          curl -sSfL https://elan.lean-lang.org/elan-init.sh \
+            | bash -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Clone and build external-tags
+        if: steps.bridge.outputs.pr_number != '' && steps.cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          git clone --quiet https://github.com/leanprover-community/external-tags external-tags
+          ( cd external-tags && git checkout --quiet "${{ steps.pin.outputs.sha }}" )
+          ( cd external-tags && lake build crossref-render )
+
+      - name: Run cross-reference review
+        if: steps.bridge.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.bridge.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.bridge.outputs.head_sha }}
+          TSV_PATH: ${{ github.workspace }}/.bridge/crossref-tags.tsv
+          CROSSREF_RENDER_BIN: ${{ github.workspace }}/external-tags/.lake/build/bin/crossref-render
+        run: |
+          # elan is needed on PATH so the lake-built binary can find its
+          # toolchain shared libs (rpath points into ~/.elan/toolchains/).
+          [[ -d "$HOME/.elan/bin" ]] && export PATH="$HOME/.elan/bin:$PATH"
+          bash "${CI_SCRIPTS_DIR}/crossref_review/post-comment.sh"
