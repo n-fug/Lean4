@@ -19,7 +19,7 @@ to be the subspace spanned by the first `k` vectors of the basis `b`.
 We also prove some lemmas about this definition.
 -/
 
-@[expose] public section
+@[expose] public noncomputable section
 
 open Set Submodule
 

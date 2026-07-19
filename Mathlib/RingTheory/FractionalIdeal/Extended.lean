@@ -37,7 +37,7 @@ This file defines the extension of a fractional ideal along a ring homomorphism.
 fractional ideal, fractional ideals, extended, extension
 -/
 
-@[expose] public section
+@[expose] public noncomputable section
 
 open IsLocalization FractionalIdeal Module Submodule
 
