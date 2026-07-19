@@ -39,7 +39,7 @@ Let `p : R[X]`.
 
 -/
 
-@[expose] public section
+@[expose] public noncomputable section
 
 namespace Polynomial
 
