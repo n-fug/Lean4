@@ -365,6 +365,20 @@ theorem ClassGroup.mk_eq_one_iff {I : (FractionalIdeal R⁰ K)ˣ} :
   · intro x_eq; apply Units.ne_zero I; simp [hx', x_eq]
   · simp [hx']
 
+/-- A fractional ideal is principal if a power coprime to the class number is principal. -/
+theorem FractionalIdeal.isPrincipal.of_isPrincipal_pow_of_coprime [IsDedekindDomain R]
+    [Fintype (ClassGroup R)] {n : ℕ} (hn : n.Coprime (Fintype.card (ClassGroup R)))
+    (I : FractionalIdeal R⁰ K) (hI : ((I ^ n : FractionalIdeal R⁰ K) : Submodule R K).IsPrincipal) :
+    (I : Submodule R K).IsPrincipal := by
+  by_cases hI0 : I = 0
+  · simp [hI0, bot_isPrincipal]
+  rw [← Ne, ← isUnit_iff_ne_zero] at hI0
+  change Submodule.IsPrincipal ((hI0.unit' : FractionalIdeal R⁰ K) : Submodule R K)
+  rw [← ClassGroup.mk_eq_one_iff, ← orderOf_eq_one_iff, ← Nat.dvd_one, ← hn, Nat.dvd_gcd_iff]
+  refine ⟨?_, orderOf_dvd_card⟩
+  rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
+  simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
+
 /-- If the class group is trivial, any unit fractional ideal is principal. -/
 theorem ClassGroup.isPrincipal_coeSubmodule_of_isUnit [Subsingleton (ClassGroup R)]
     (I : FractionalIdeal R⁰ K) (hI : IsUnit I) :
@@ -386,6 +400,18 @@ theorem ClassGroup.isPrincipal_of_isUnit_coeIdeal [Subsingleton (ClassGroup R)]
 theorem ClassGroup.mk0_eq_one_iff [IsDedekindDomain R] {I : Ideal R} (hI : I ∈ (Ideal R)⁰) :
     ClassGroup.mk0 ⟨I, hI⟩ = 1 ↔ I.IsPrincipal :=
   ClassGroup.mk_eq_one_iff.trans (coeSubmodule_isPrincipal R _)
+
+/-- An ideal is principal if a power coprime to the class number is principal. -/
+theorem Ideal.IsPrincipal.of_isPrincipal_pow_of_coprime [IsDedekindDomain R]
+    [Fintype (ClassGroup R)] {n : ℕ} (hn : n.Coprime (Fintype.card (ClassGroup R)))
+    {I : Ideal R} (hI : (I ^ n).IsPrincipal) : I.IsPrincipal := by
+  by_cases hI0 : I = 0
+  · simp [hI0, bot_isPrincipal]
+  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero (pow_ne_zero n hI0))] at hI
+  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero hI0), ← orderOf_eq_one_iff,
+    ← Nat.dvd_one, ← hn, Nat.dvd_gcd_iff]
+  refine ⟨?_, orderOf_dvd_card⟩
+  rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]
 
 theorem ClassGroup.mk0_eq_mk0_inv_iff [IsDedekindDomain R] {I J : (Ideal R)⁰} :
     ClassGroup.mk0 I = (ClassGroup.mk0 J)⁻¹ ↔
