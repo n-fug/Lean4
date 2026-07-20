@@ -21,7 +21,7 @@ jobs:
         printf $'summary<<EOF\n%s\nEOF' "$(./scripts/technical-debt-metrics.sh)" >> "$GITHUB_OUTPUT"
 
     - name: Post output to Zulip
-      uses: zulip/github-actions-zulip/send-message@v1
+      uses: zulip/github-actions-zulip/send-message@v2
       with:
         api-key: ${{ secrets.ZULIP_API_KEY }}
         email: 'github-mathlib4-bot@leanprover.zulipchat.com'

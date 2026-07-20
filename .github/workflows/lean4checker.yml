@@ -86,7 +86,7 @@ jobs:
 
       - name: Post success message on Zulip
         if: success()
-        uses: zulip/github-actions-zulip/send-message@v1
+        uses: zulip/github-actions-zulip/send-message@v2
         with:
           api-key: ${{ secrets.ZULIP_API_KEY }}
           email: 'github-mathlib4-bot@leanprover.zulipchat.com'
@@ -99,7 +99,7 @@ jobs:
 
       - name: Post failure message on Zulip
         if: failure()
-        uses: zulip/github-actions-zulip/send-message@v1
+        uses: zulip/github-actions-zulip/send-message@v2
         with:
           api-key: ${{ secrets.ZULIP_API_KEY }}
           email: 'github-mathlib4-bot@leanprover.zulipchat.com'
@@ -113,7 +113,7 @@ jobs:
 
       - name: Post failure message on Zulip main topic
         if: failure()
-        uses: zulip/github-actions-zulip/send-message@v1
+        uses: zulip/github-actions-zulip/send-message@v2
         with:
           api-key: ${{ secrets.ZULIP_API_KEY }}
           email: 'github-mathlib4-bot@leanprover.zulipchat.com'
