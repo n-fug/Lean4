@@ -44,7 +44,7 @@ jobs:
             > ${{ github.event.pull_request.title }}
 
       - name: Add comment to PR
-        uses: GrantBirki/comment@v2
+        uses: GrantBirki/comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
